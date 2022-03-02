@@ -11,5 +11,6 @@ public class Class1
         // TODO: Add constructor logic here
         //
     public int MyProperty { get; set; }
+    public int MyProperty22 { get; set; }
 }
 }
