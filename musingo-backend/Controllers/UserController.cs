@@ -37,6 +37,7 @@ public class UserController : ControllerBase
         var user = await _userRepository.LoginUser(loginData.Email, loginData.Password);
         if (user is null) return NotFound();
         return _mapper.Map<UserDto>(user);
+        
     }
 
     [HttpPost("register", Name = "RegisterUser")]
