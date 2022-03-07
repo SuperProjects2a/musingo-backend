@@ -21,7 +21,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-var key = "This is my first Test Key";
+//var key = "This is my first Test Key";
 builder.Services.AddAuthentication(x =>
 {
     x.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
@@ -35,10 +35,10 @@ builder.Services.AddAuthentication(x =>
         ValidateIssuerSigningKey = true,
         ValidateIssuer = false,
         ValidateAudience = false,
-        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(key))
+        IssuerSigningKey = new SymmetricSecurityKey(Encoding.ASCII.GetBytes(builder.Configuration.GetSection("TokenKey").Value))
     };
 });
-builder.Services.AddSingleton<IJwtAuth>(new Auth(key));
+builder.Services.AddSingleton<IJwtAuth>(new Auth(builder.Configuration.GetSection("TokenKey").Value));
 var app = builder.Build();
 
 using (var scope = app.Services.CreateScope())
