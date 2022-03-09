@@ -2,6 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
+using musingo_backend.Dtos;
 
 namespace musingo_backend.Authentication
 {
@@ -14,6 +15,7 @@ namespace musingo_backend.Authentication
         }
         public string Authentication(string username)
         {
+
             var tokenHandler = new JwtSecurityTokenHandler();
             var tokenKey = Encoding.ASCII.GetBytes(_key);
             var tokenDescriptor = new SecurityTokenDescriptor()

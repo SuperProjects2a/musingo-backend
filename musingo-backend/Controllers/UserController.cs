@@ -34,17 +34,16 @@ public class UserController : ControllerBase
         }
         return NotFound();
     }
-    [AllowAnonymous]
+    
     [HttpPost("login", Name = "LoginUser")]
     public async Task<ActionResult<UserDto>> LoginUser(UserLoginDto loginData)
     {
         if (loginData.Email is null || loginData.Password is null) return BadRequest();
         var user = await _userRepository.LoginUser(loginData.Email, loginData.Password);
         if (user is null) return NotFound();
-        var t = _mapper.Map<UserDto>(user);
-        t.Token = _jwtAuth.Authentication(t.Email);
-        return t;
-        //return _mapper.Map<UserDto>(user);
+        var token = _jwtAuth.Authentication(loginData.Email);
+        HttpContext.Response.Headers.Add("AuthToken", token);
+        return _mapper.Map<UserDto>(user);
 
     }
 
