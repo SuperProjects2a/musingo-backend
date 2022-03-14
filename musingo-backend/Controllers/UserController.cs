@@ -34,7 +34,7 @@ public class UserController : ControllerBase
         }
         return NotFound();
     }
-    
+    [AllowAnonymous]
     [HttpPost("login", Name = "LoginUser")]
     public async Task<ActionResult<UserDto>> LoginUser(UserLoginDto loginData)
     {
@@ -46,7 +46,7 @@ public class UserController : ControllerBase
         return _mapper.Map<UserDto>(user);
 
     }
-
+    [AllowAnonymous]
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<UserDto>> RegisterUser(UserRegisterDto userRegisterData)
     {
