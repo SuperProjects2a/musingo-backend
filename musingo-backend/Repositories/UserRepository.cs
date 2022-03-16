@@ -25,12 +25,22 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<User?> LoginUser(string login, string password)
     {
-        var result = await GetAll().FirstOrDefaultAsync(x => x.Email == login && x.Password == password);
-        return result;
+        var result = await GetAll().FirstOrDefaultAsync(x => x.Email == login);
+        if (result is null)
+            return result;
+        var isValidPassword = BCrypt.Net.BCrypt.Verify(password, result.Password);
+        if (isValidPassword)
+        {
+            return result;
+
+        }
+        return null;
+
     }
 
     public async Task<User?> AddUser(User user)
     {
+        user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
         var result = await AddAsync(user);
         return result;
     }
