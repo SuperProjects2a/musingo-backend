@@ -9,7 +9,7 @@ public interface IUserRepository
     public Task<User?> GetUserById(int id);
     public Task<User?> LoginUser(string login, string password);
     public Task<User?> AddUser(User user);
-    
+
 }
 
 public class UserRepository : Repository<User>, IUserRepository

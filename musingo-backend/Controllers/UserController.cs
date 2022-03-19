@@ -57,5 +57,4 @@ public class UserController : ControllerBase
         return _mapper.Map<UserDto>(user);
     }
 
-
 }

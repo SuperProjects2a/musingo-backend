@@ -29,4 +29,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         await repositoryContext.SaveChangesAsync();
         return entity;
     }
+
+    public async Task<TEntity> DeleteAsync(TEntity entity)
+    {
+        repositoryContext.Remove(entity);
+        await repositoryContext.SaveChangesAsync();
+        return entity;
+    }
 }
