@@ -35,13 +35,13 @@ namespace musingo_backend.Controllers
             var transaction = await _commentRepository.GetTransaction(userCommentData.TransactionId);
             if (transaction is null) return NotFound();
 
-            if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email  ||
+            if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email ||
             transaction.Seller.Email != userCommentData.TransactionSeller.Email)
             {
                 return Problem("Transaction not found");
             }
 
-            var userComment = await  _commentRepository.IsCommented(transaction.Id);
+            var userComment = await _commentRepository.IsCommented(transaction.Id);
             if (userComment is not null)
             {
                 return Problem("You can only comment once");
@@ -52,12 +52,16 @@ namespace musingo_backend.Controllers
             return _mapper.Map<UserCommentDto>(result);
         }
         [HttpPost("update", Name = "UpdateComment")]
-        public async Task<ActionResult<UserCommentDto>> UpdateComment(UserCommentDto userCommentData)
+        public async Task<ActionResult<UserCommentDto>> UpdateComment(int id, double? rating, string? text)
         {
-            var comment = _mapper.Map<UserComment>(userCommentData);
-            comment.Transaction = await _commentRepository.GetTransaction(userCommentData.TransactionId);
-            if (comment is null || comment.Transaction is null) return Forbid();
-            var result = await _commentRepository.UpdateComment(comment);
+            var userComment = await _commentRepository.GetCommentById(id);
+            if (userComment is null) { return NotFound(); }
+
+            if (rating is not null) userComment.Rating = (double)rating;
+            if (!String.IsNullOrEmpty(text)) userComment.CommentText = text;
+
+
+            var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentDto>(result);
         }
         [HttpDelete("delete", Name = "DeleteComment")]
