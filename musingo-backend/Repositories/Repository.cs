@@ -31,7 +31,7 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         return entity;
     }
 
-    public async Task<TEntity> DeleteAsync(TEntity entity)
+    public async Task<TEntity> RemoveAsync(TEntity entity)
     {
         repositoryContext.Remove(entity);
         await repositoryContext.SaveChangesAsync();

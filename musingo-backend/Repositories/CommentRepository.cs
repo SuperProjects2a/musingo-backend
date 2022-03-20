@@ -59,7 +59,10 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
 
     public async Task<UserComment> RemoveCommentById(int id)
     {
-        var result = await DeleteAsync(GetAll().FirstOrDefault(x=>x.Id == id));
+        var userComment = GetAll().FirstOrDefault(x => x.Id == id);
+        if (userComment is null)
+            return userComment;
+        var result = await RemoveAsync(userComment);
         return result;
     }
 }

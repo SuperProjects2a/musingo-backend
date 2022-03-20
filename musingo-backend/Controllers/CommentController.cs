@@ -41,8 +41,8 @@ namespace musingo_backend.Controllers
                 return Problem("Transaction not found");
             }
 
-            var userComment = await _commentRepository.IsCommented(transaction.Id);
-            if (userComment is not null)
+            var isCommented = await _commentRepository.IsCommented(transaction.Id);
+            if (isCommented is not null)
             {
                 return Problem("You can only comment once");
             }
@@ -68,6 +68,7 @@ namespace musingo_backend.Controllers
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
             var result = await _commentRepository.RemoveCommentById(id);
+            if (result is null) return NotFound();
             return _mapper.Map<UserCommentDto>(result);
         }
 
