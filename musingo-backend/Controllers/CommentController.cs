@@ -14,7 +14,7 @@ namespace musingo_backend.Controllers
         private ICommentRepository _commentRepository;
         private IMapper _mapper;
 
-        public CommentController(ICommentRepository commentRepository,IMapper mapper)
+        public CommentController(ICommentRepository commentRepository, IMapper mapper)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
@@ -29,12 +29,25 @@ namespace musingo_backend.Controllers
             }
             return NotFound();
         }
-        [HttpPost("add",Name="AddComment")]
+        [HttpPost("add", Name = "AddComment")]
         public async Task<ActionResult<UserCommentDto>> AddComment(UserCommentDto userCommentData)
         {
+            var transaction = await _commentRepository.GetTransaction(userCommentData.TransactionId);
+            if (transaction is null) return NotFound();
+
+            if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email  ||
+            transaction.Seller.Email != userCommentData.TransactionSeller.Email)
+            {
+                return Problem("Transaction not found");
+            }
+
+            var userComment = await  _commentRepository.IsCommented(transaction.Id);
+            if (userComment is not null)
+            {
+                return Problem("You can only comment once");
+            }
             var comment = _mapper.Map<UserComment>(userCommentData);
-            comment.Transaction = await _commentRepository.GetTransaction(userCommentData.TransactionId);
-            if (comment is null||comment.Transaction is null) return Forbid();
+            comment.Transaction = transaction;
             var result = await _commentRepository.AddComment(comment);
             return _mapper.Map<UserCommentDto>(result);
         }
@@ -47,7 +60,7 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.UpdateComment(comment);
             return _mapper.Map<UserCommentDto>(result);
         }
-        [HttpDelete("delete",Name="DeleteComment")]
+        [HttpDelete("delete", Name = "DeleteComment")]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
             var result = await _commentRepository.RemoveCommentById(id);

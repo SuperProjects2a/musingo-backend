@@ -12,6 +12,7 @@ public interface ICommentRepository
     public Task<UserComment> UpdateComment(UserComment userComment);
     public Task<UserComment> RemoveCommentById(int id);
     public Task<Transaction> GetTransaction(int id);
+    public Task<UserComment> IsCommented(int id);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
 {
@@ -35,7 +36,16 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
 
     public async Task<Transaction> GetTransaction(int id)
     {
-        var result = await  repositoryContext.Transactions.FirstOrDefaultAsync(x => x.Id == id);
+        var result = await  repositoryContext.Transactions
+            .Include(x=>x.Seller)
+            .Include(x=>x.Buyer)
+            .FirstOrDefaultAsync(x => x.Id == id);
+        return result;
+    }
+
+    public async Task<UserComment> IsCommented(int id)
+    {
+        var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == id);
         return result;
     }
 
