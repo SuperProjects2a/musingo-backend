@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using musingo_backend.Data;
+using musingo_backend.Dtos;
 using musingo_backend.Models;
 
 namespace musingo_backend.Repositories;
@@ -9,15 +10,21 @@ public interface ICommentRepository
     public Task<UserComment> GetCommentById(int id);
     public Task<UserComment> AddComment(UserComment userComment);
     public Task<UserComment> UpdateComment(UserComment userComment);
-    public Task<UserComment> RemoveComment(UserComment userComment);
+    public Task<UserComment> RemoveCommentById(int id);
+    public Task<Transaction> GetTransaction(int id);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
 {
     public CommentRepository(RepositoryContext context) : base(context) { }
     public async Task<UserComment> GetCommentById(int id)
     {
-        var result = await GetAll().FirstOrDefaultAsync(x=>x.Id == id);
-        return result;
+       var result = await GetAll()
+           .Include(x=>x.Transaction)
+           .ThenInclude(x=>x.Seller)
+           .Include(x=>x.Transaction)
+           .ThenInclude(x=>x.Buyer)
+           .FirstOrDefaultAsync(x=>x.Id == id);
+       return result;
     }
 
     public async Task<UserComment> AddComment(UserComment userComment)
@@ -26,15 +33,23 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
+    public async Task<Transaction> GetTransaction(int id)
+    {
+        var result = await  repositoryContext.Transactions.FirstOrDefaultAsync(x => x.Id == id);
+        return result;
+    }
+
+
     public async Task<UserComment> UpdateComment(UserComment userComment)
     {
+        
         var result = await UpdateAsync(userComment);
         return result;
     }
 
-    public async Task<UserComment> RemoveComment(UserComment userComment)
+    public async Task<UserComment> RemoveCommentById(int id)
     {
-        var result = await DeleteAsync(userComment);
+        var result = await DeleteAsync(GetAll().FirstOrDefault(x=>x.Id == id));
         return result;
     }
 }
