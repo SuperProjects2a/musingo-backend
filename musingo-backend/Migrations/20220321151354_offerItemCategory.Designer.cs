@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using musingo_backend.Data;
 
@@ -11,9 +12,10 @@ using musingo_backend.Data;
 namespace musingo_backend.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220321151354_offerItemCategory")]
+    partial class offerItemCategory
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -44,10 +46,8 @@ namespace musingo_backend.Migrations
                         .HasColumnType("nvarchar(MAX)")
                         .HasColumnName("image_url");
 
-                    b.Property<string>("ItemCategory")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(30)")
-                        .HasColumnName("item_category");
+                    b.Property<int>("ItemCategory")
+                        .HasColumnType("int");
 
                     b.Property<int>("OfferStatus")
                         .HasColumnType("int")

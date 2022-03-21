@@ -2,7 +2,7 @@
 using System.Security.Claims;
 using System.Text;
 using Microsoft.IdentityModel.Tokens;
-using musingo_backend.Dtos;
+using musingo_backend.Models;
 
 namespace musingo_backend.Authentication
 {
@@ -13,7 +13,7 @@ namespace musingo_backend.Authentication
         {
             _key = key;
         }
-        public string Authentication(string username)
+        public string Authentication(User user)
         {
 
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -23,7 +23,7 @@ namespace musingo_backend.Authentication
                 Subject = new ClaimsIdentity(
                     new[]
                     {
-                        new Claim(ClaimTypes.Name, username)
+                        new Claim("id", user.Id.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(
