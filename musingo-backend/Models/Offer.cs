@@ -26,5 +26,6 @@ public class Offer
     public User? Owner { get; set; }
     public string? Description { get; set; }
     public OfferStatus OfferStatus { get; set; }
+    public ItemCategory ItemCategory { get; set; }
     
 }
