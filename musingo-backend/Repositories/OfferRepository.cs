@@ -30,7 +30,7 @@ namespace musingo_backend.Repositories
 
         public async Task<Offer?> GetOfferById(int id)
         {
-            return await GetAll().FirstOrDefaultAsync(x => x.Id == id);
+            return await GetAll().Include(x => x.Owner).FirstOrDefaultAsync(x => x.Id == id);
         }
 
         public async Task<Offer?> UpdateOffer(Offer offer)
