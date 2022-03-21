@@ -10,11 +10,16 @@ public enum OfferStatus
 
 public enum ItemCategory
 {
-    Instruments,
+    Other,
+    Guitars,
+    WindInstruments,
+    Keyboards,
+    Percussion,
+    String,
+    Microphones,
+    Headphones,
+    NotesBooks,
     Accessories,
-    MusicDisks,
-    InstrumentParts,
-    Electronics
 }
 
 public class Offer
