@@ -1,3 +1,5 @@
+using Microsoft.EntityFrameworkCore;
+
 namespace musingo_backend.Models;
 
 public class User

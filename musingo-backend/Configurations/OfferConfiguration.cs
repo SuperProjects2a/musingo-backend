@@ -45,5 +45,10 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("cost")
             .HasColumnType("double precision")
             .IsRequired();
+
+        builder.Property(x => x.ItemCategory)
+            .HasColumnName("item_category")
+            .HasColumnType("nvarchar(30)")
+            .IsRequired();
     }
 }
