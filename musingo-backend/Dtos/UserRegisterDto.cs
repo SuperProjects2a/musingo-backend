@@ -27,8 +27,8 @@ public class UserRegisterDto
     public bool AcceptedTOS { get; set; }
 
 
-    //[RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]
-    //public string Password { get; set; }
+    [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]
+    public string Password { get; set; }
 
     //public string City { get; set; } // wybieramy z listy
 
