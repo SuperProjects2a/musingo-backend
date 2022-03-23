@@ -15,7 +15,7 @@ namespace musingo_backend.Controllers
         private readonly ITransactionRepository _transactionRepository;
         private readonly IMapper _mapper;
 
-        public CommentController(ICommentRepository commentRepository,ITransactionRepository transactionRepository, IMapper mapper)
+        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IMapper mapper)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
@@ -37,15 +37,15 @@ namespace musingo_backend.Controllers
             var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
             if (transaction is null) return NotFound();
 
-            if (transaction.Status != TransactionStatus.Finished)
-            {
-                return Problem("Transcation not finished. You can't comment yet");
-            }
-
             if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email ||
-            transaction.Seller.Email != userCommentData.TransactionSeller.Email)
+                transaction.Seller.Email != userCommentData.TransactionSeller.Email)
             {
                 return Problem("Transaction not found");
+            }
+
+            if (transaction.Status != TransactionStatus.Finished)
+            {
+                return Problem("Transaction not finished. You can't comment yet");
             }
 
             var isCommented = await _commentRepository.IsCommented(transaction.Id);
@@ -65,7 +65,7 @@ namespace musingo_backend.Controllers
             if (userComment is null) { return NotFound(); }
             if (userCommentData.Rating is not null) userComment.Rating = (double)userCommentData.Rating;
             if (!String.IsNullOrEmpty(userCommentData.CommentText)) userComment.CommentText = userCommentData.CommentText;
-            //userComment = _mapper.Map<UserComment>(userCommentData);
+            // userComment = _mapper.Map<UserComment>(userCommentData);
             var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentUpdateDto>(result);
         }
