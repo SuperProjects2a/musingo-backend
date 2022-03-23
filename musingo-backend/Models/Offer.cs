@@ -10,11 +10,16 @@ public enum OfferStatus
 
 public enum ItemCategory
 {
-    Instruments,
+    Other,
+    Guitars,
+    WindInstruments,
+    Keyboards,
+    Percussion,
+    String,
+    Microphones,
+    Headphones,
+    NotesBooks,
     Accessories,
-    MusicDisks,
-    InstrumentParts,
-    Electronics
 }
 
 public class Offer
@@ -26,5 +31,6 @@ public class Offer
     public User? Owner { get; set; }
     public string? Description { get; set; }
     public OfferStatus OfferStatus { get; set; }
+    public ItemCategory ItemCategory { get; set; }
     
 }
