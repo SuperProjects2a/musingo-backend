@@ -11,13 +11,15 @@ namespace musingo_backend.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private ICommentRepository _commentRepository;
-        private IMapper _mapper;
+        private readonly ICommentRepository _commentRepository;
+        private readonly ITransactionRepository _transactionRepository;
+        private readonly IMapper _mapper;
 
-        public CommentController(ICommentRepository commentRepository, IMapper mapper)
+        public CommentController(ICommentRepository commentRepository,ITransactionRepository transactionRepository, IMapper mapper)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
+            _transactionRepository = transactionRepository;
         }
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
@@ -32,8 +34,13 @@ namespace musingo_backend.Controllers
         [HttpPost("add", Name = "AddComment")]
         public async Task<ActionResult<UserCommentDto>> AddComment(UserCommentDto userCommentData)
         {
-            var transaction = await _commentRepository.GetTransaction(userCommentData.TransactionId);
+            var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
             if (transaction is null) return NotFound();
+
+            if (transaction.Status != TransactionStatus.Finished)
+            {
+                return Problem("Transcation not finished. You can't comment yet");
+            }
 
             if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email ||
             transaction.Seller.Email != userCommentData.TransactionSeller.Email)
