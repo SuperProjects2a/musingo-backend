@@ -13,13 +13,15 @@ namespace musingo_backend.Controllers
     {
         private readonly ICommentRepository _commentRepository;
         private readonly ITransactionRepository _transactionRepository;
+        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
 
-        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IMapper mapper)
+        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IUserRepository userRepository, IMapper mapper)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
             _transactionRepository = transactionRepository;
+            _userRepository = userRepository;
         }
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
@@ -75,6 +77,15 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.RemoveCommentById(id);
             if (result is null) return NotFound();
             return _mapper.Map<UserCommentDto>(result);
+        }
+        [HttpGet("/avg{id}", Name = "GetAvgRating")]
+        public async Task<ActionResult<UserDto>> GetAvgRating(int id)
+        {
+            var user = await _userRepository.GetUserById(id);
+            var rating =await  _commentRepository.GetAvgRating(id);
+            var result = _mapper.Map<UserDto>(user);
+            result.AvgRating =rating;
+            return result;
         }
 
     }
