@@ -52,17 +52,15 @@ namespace musingo_backend.Controllers
             return _mapper.Map<UserCommentDto>(result);
         }
         [HttpPost("update", Name = "UpdateComment")]
-        public async Task<ActionResult<UserCommentDto>> UpdateComment(int id, double? rating, string? text)
+        public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
-            var userComment = await _commentRepository.GetCommentById(id);
+            var userComment = await _commentRepository.GetCommentById(userCommentData.Id);
             if (userComment is null) { return NotFound(); }
-
-            if (rating is not null) userComment.Rating = (double)rating;
-            if (!String.IsNullOrEmpty(text)) userComment.CommentText = text;
-
-
+            if (userCommentData.Rating is not null) userComment.Rating = (double)userCommentData.Rating;
+            if (!String.IsNullOrEmpty(userCommentData.CommentText)) userComment.CommentText = userCommentData.CommentText;
+            //userComment = _mapper.Map<UserComment>(userCommentData);
             var result = await _commentRepository.UpdateComment(userComment);
-            return _mapper.Map<UserCommentDto>(result);
+            return _mapper.Map<UserCommentUpdateDto>(result);
         }
         [HttpDelete("delete", Name = "DeleteComment")]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)

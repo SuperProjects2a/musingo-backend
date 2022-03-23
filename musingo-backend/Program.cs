@@ -12,7 +12,10 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 builder.Services.AddDbContext<RepositoryContext>(options =>
-    options.UseSqlServer(builder.Configuration.GetConnectionString("MusingoDatabase")));
+{
+    options.UseSqlServer(builder.Configuration.GetConnectionString("MusingoDatabase"));
+    options.EnableSensitiveDataLogging();
+});
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<IUserRepository, UserRepository>();
