@@ -1,9 +1,9 @@
-﻿using musingo_backend.Dtos;
+﻿using musingo_backend.Models;
 
 namespace musingo_backend.Authentication
 {
     public interface IJwtAuth
     {
-        string Authentication(string username);
+        string Authentication(User user);
     }
 }

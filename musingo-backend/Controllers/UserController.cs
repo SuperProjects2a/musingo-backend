@@ -44,7 +44,7 @@ public class UserController : ControllerBase
         if (loginData.Email is null || loginData.Password is null) return BadRequest();
         var user = await _userRepository.LoginUser(loginData.Email, loginData.Password);
         if (user is null) return NotFound();
-        var token = _jwtAuth.Authentication(loginData.Email);
+        var token = _jwtAuth.Authentication(user);
         HttpContext.Response.Headers.Add("AuthToken", token);
         return _mapper.Map<UserDto>(user);
 
