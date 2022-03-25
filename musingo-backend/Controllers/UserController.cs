@@ -24,14 +24,15 @@ public class UserController : ControllerBase
         _userRepository = userRepository;
         _jwtAuth = jwtAuth;
     }
-    
     [HttpGet("{id}", Name = "GetUserById")]
     public async Task<ActionResult<UserDto>> GetPlatformById(int id)
     {
         var platformItem = await _userRepository.GetUserById(id);
         if (platformItem is not null)
         {
-            return Ok(_mapper.Map<UserDto>(platformItem));
+            var userDto = _mapper.Map<UserDto>(platformItem);
+            userDto.AvgRating =await _userRepository.GetAvg(id);
+            return Ok(userDto);
         }
         return NotFound();
     }
@@ -44,7 +45,10 @@ public class UserController : ControllerBase
         if (user is null) return NotFound();
         var token = _jwtAuth.Authentication(user);
         HttpContext.Response.Headers.Add("AuthToken", token);
-        return _mapper.Map<UserDto>(user);
+
+        var userDto = _mapper.Map<UserDto>(user);
+        userDto.AvgRating = await _userRepository.GetAvg(user.Id);
+        return Ok(userDto);
 
     }
     [AllowAnonymous]
@@ -56,6 +60,5 @@ public class UserController : ControllerBase
         if (user is null) return Forbid();
         return _mapper.Map<UserDto>(user);
     }
-
 
 }

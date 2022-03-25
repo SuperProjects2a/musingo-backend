@@ -9,7 +9,10 @@ public interface IUserRepository
     public Task<User?> GetUserById(int id);
     public Task<User?> LoginUser(string login, string password);
     public Task<User?> AddUser(User user);
-    
+
+    public Task<double> GetAvg(int id);
+
+
 }
 
 public class UserRepository : Repository<User>, IUserRepository
@@ -44,4 +47,17 @@ public class UserRepository : Repository<User>, IUserRepository
         var result = await AddAsync(user);
         return result;
     }
+
+    public async Task<double> GetAvg(int id)
+    {
+        var transactions = await repositoryContext.UserComments
+            .Where(x => x.Transaction.Buyer.Id == id || x.Transaction.Seller.Id == id)
+            .Where(x => x.User.Id != id)
+            .ToListAsync();
+        if (transactions.Count == 0)
+            return 0;
+        var rating = transactions.Average(x => x.Rating);
+        return rating;
+    }
+
 }

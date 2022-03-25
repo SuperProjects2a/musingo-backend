@@ -6,5 +6,6 @@ public class UserComment
     public double Rating { get; set; }
     public Transaction? Transaction { get; set; }
     public string? CommentText { get; set; }
+    public User? User { get; set; }
     
 }

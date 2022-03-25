@@ -1,3 +1,4 @@
+using Microsoft.EntityFrameworkCore;
 using musingo_backend.Data;
 
 namespace musingo_backend.Repositories;
@@ -26,6 +27,13 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
     public async Task<TEntity> UpdateAsync(TEntity entity)
     {
         repositoryContext.Update(entity);
+        await repositoryContext.SaveChangesAsync();
+        return entity;
+    }
+
+    public async Task<TEntity> RemoveAsync(TEntity entity)
+    {
+        repositoryContext.Remove(entity);
         await repositoryContext.SaveChangesAsync();
         return entity;
     }
