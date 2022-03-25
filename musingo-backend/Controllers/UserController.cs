@@ -31,7 +31,9 @@ public class UserController : ControllerBase
         var platformItem = await _userRepository.GetUserById(id);
         if (platformItem is not null)
         {
-            return Ok(_mapper.Map<UserDto>(platformItem));
+            var userDto = _mapper.Map<UserDto>(platformItem);
+            userDto.AvgRating =await _userRepository.GetAvg(id);
+            return Ok(userDto);
         }
         return NotFound();
     }

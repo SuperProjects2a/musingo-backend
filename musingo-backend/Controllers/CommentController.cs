@@ -78,15 +78,6 @@ namespace musingo_backend.Controllers
             if (result is null) return NotFound();
             return _mapper.Map<UserCommentDto>(result);
         }
-        [HttpGet("/avg{id}", Name = "GetAvgRating")]
-        public async Task<ActionResult<UserDto>> GetAvgRating(int id)
-        {
-            var user = await _userRepository.GetUserById(id);
-            var rating =await  _commentRepository.GetAvgRating(id);
-            var result = _mapper.Map<UserDto>(user);
-            result.AvgRating =rating;
-            return result;
-        }
 
     }
 }

@@ -12,8 +12,6 @@ public interface ICommentRepository
     public Task<UserComment> UpdateComment(UserComment userComment);
     public Task<UserComment> RemoveCommentById(int id);
     public Task<UserComment> IsCommented(int id);
-
-    public Task<double> GetAvgRating(int id);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
 {
@@ -58,12 +56,4 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
-    public async Task<double> GetAvgRating(int id)
-    {
-        var transactions = await repositoryContext.UserComments.Where(x=>x.Transaction.Buyer.Id == id).ToListAsync();
-        if (transactions.Count == 0)
-            return 0;
-        var rating =  transactions.Average(x => x.Rating);
-        return rating;
-    }
 }
