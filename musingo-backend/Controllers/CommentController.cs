@@ -38,19 +38,16 @@ namespace musingo_backend.Controllers
         {
             var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
             if (transaction is null) return NotFound();
-
-            if (transaction.Buyer.Email != userCommentData.TransactionBuyer.Email ||
-                transaction.Seller.Email != userCommentData.TransactionSeller.Email)
-            {
-                return Problem("Transaction not found");
-            }
-
             if (transaction.Status != TransactionStatus.Finished)
             {
                 return Problem("Transaction not finished. You can't comment yet");
             }
-
-            var isCommented = await _commentRepository.IsCommented(transaction.Id);
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            if (userId != transaction.Buyer.Id || userId != transaction.Seller.Id)
+            {
+                return Forbid();
+            }
+            var isCommented = await _commentRepository.IsCommented(transaction.Id,userId);
             if (isCommented is not null)
             {
                 return Problem("You can only comment once");

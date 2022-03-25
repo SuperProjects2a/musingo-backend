@@ -13,6 +13,11 @@ public class UserCommentConfiguration : IEntityTypeConfiguration<UserComment>
             .WithMany()
             .HasForeignKey("transaction_id");
 
+        builder.ToTable("user_comments")
+            .HasOne(x => x.User)
+            .WithMany()
+            .HasForeignKey("user_id");
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)

@@ -11,7 +11,7 @@ public interface ICommentRepository
     public Task<UserComment> AddComment(UserComment userComment);
     public Task<UserComment> UpdateComment(UserComment userComment);
     public Task<UserComment> RemoveCommentById(int id);
-    public Task<UserComment> IsCommented(int id);
+    public Task<UserComment> IsCommented(int transactionId,int userId);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
 {
@@ -33,9 +33,9 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
-    public async Task<UserComment> IsCommented(int id)
+    public async Task<UserComment> IsCommented(int transactionId,int userId)
     {
-        var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == id);
+        var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == transactionId);
         return result;
     }
 
@@ -47,9 +47,9 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
-    public async Task<UserComment> RemoveCommentById(int id)
+    public async Task<UserComment> RemoveCommentById(int transactionId)
     {
-        var userComment = GetAll().FirstOrDefault(x => x.Id == id);
+        var userComment = GetAll().FirstOrDefault(x => x.Id == transactionId);
         if (userComment is null)
             return userComment;
         var result = await RemoveAsync(userComment);
