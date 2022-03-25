@@ -130,12 +130,6 @@ namespace musingo_backend.Migrations
                         .HasColumnType("nvarchar(MAX)")
                         .HasColumnName("password");
 
-                    b.Property<double>("Rating")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("float")
-                        .HasDefaultValue(0.0)
-                        .HasColumnName("rating");
-
                     b.HasKey("Id");
 
                     b.HasIndex("Email")
