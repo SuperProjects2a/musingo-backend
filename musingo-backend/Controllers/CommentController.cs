@@ -8,6 +8,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
 {
+    [Authorize]
     [Route("api/[controller]")]
     [ApiController]
     public class CommentController : ControllerBase
@@ -24,6 +25,7 @@ namespace musingo_backend.Controllers
             _transactionRepository = transactionRepository;
             _userRepository = userRepository;
         }
+
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {
@@ -32,9 +34,10 @@ namespace musingo_backend.Controllers
             {
                 return Ok(_mapper.Map<UserCommentDto>(result));
             }
+
             return NotFound();
         }
-        [Authorize]
+
         [HttpPost]
         public async Task<ActionResult<UserCommentCreateDto>> AddComment(UserCommentCreateDto userCommentData)
         {
@@ -61,7 +64,6 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.AddComment(comment);
             return _mapper.Map<UserCommentCreateDto>(result);
         }
-        [Authorize]
         [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
@@ -80,7 +82,6 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentUpdateDto>(result);
         }
-        [Authorize]
         [HttpDelete]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {

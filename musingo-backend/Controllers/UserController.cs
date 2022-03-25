@@ -24,7 +24,7 @@ public class UserController : ControllerBase
         _userRepository = userRepository;
         _jwtAuth = jwtAuth;
     }
-    
+    [AllowAnonymous]
     [HttpGet("{id}", Name = "GetUserById")]
     public async Task<ActionResult<UserDto>> GetPlatformById(int id)
     {
@@ -46,7 +46,10 @@ public class UserController : ControllerBase
         if (user is null) return NotFound();
         var token = _jwtAuth.Authentication(user);
         HttpContext.Response.Headers.Add("AuthToken", token);
-        return _mapper.Map<UserDto>(user);
+
+        var userDto = _mapper.Map<UserDto>(user);
+        userDto.AvgRating = await _userRepository.GetAvg(user.Id);
+        return Ok(userDto);
 
     }
     [AllowAnonymous]

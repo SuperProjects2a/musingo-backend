@@ -50,7 +50,10 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<double> GetAvg(int id)
     {
-        var transactions = await repositoryContext.UserComments.Where(x => x.Transaction.Buyer.Id == id).ToListAsync();
+        var transactions = await repositoryContext.UserComments
+            .Where(x => x.Transaction.Buyer.Id == id || x.Transaction.Seller.Id == id)
+            .Where(x => x.User.Id != id)
+            .ToListAsync();
         if (transactions.Count == 0)
             return 0;
         var rating = transactions.Average(x => x.Rating);
