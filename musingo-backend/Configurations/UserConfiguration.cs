@@ -37,5 +37,9 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("image_url")
             .HasColumnType("nvarchar(MAX)")
             .IsRequired(false);
+
+        builder.Property(x => x.Rating)
+            .HasColumnName("rating")
+            .HasDefaultValue(0.0);
     }
 }
