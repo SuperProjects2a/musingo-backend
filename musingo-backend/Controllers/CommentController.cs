@@ -36,7 +36,7 @@ namespace musingo_backend.Controllers
         }
         [Authorize]
         [HttpPost]
-        public async Task<ActionResult<UserCommentDto>> AddComment(UserCommentDto userCommentData)
+        public async Task<ActionResult<UserCommentCreateDto>> AddComment(UserCommentCreateDto userCommentData)
         {
             var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
             if (transaction is null) return NotFound();
@@ -50,7 +50,7 @@ namespace musingo_backend.Controllers
                 return Forbid();
             }
 
-            var isCommented = await _commentRepository.IsCommented(transaction.Id,userId);
+            var isCommented = await _commentRepository.IsCommented(transaction.Id, userId);
             if (isCommented is not null)
             {
                 return Problem("You can only comment once");
@@ -59,23 +59,39 @@ namespace musingo_backend.Controllers
             comment.User = await _userRepository.GetUserById(userId);
             comment.Transaction = transaction;
             var result = await _commentRepository.AddComment(comment);
-            return _mapper.Map<UserCommentDto>(result);
+            return _mapper.Map<UserCommentCreateDto>(result);
         }
+        [Authorize]
         [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
             var userComment = await _commentRepository.GetCommentById(userCommentData.Id);
+
             if (userComment is null) { return NotFound(); }
+
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+
+            if (userComment.User.Id != userId) { return Forbid(); }
+
             if (userCommentData.Rating is not null) userComment.Rating = (double)userCommentData.Rating;
+
             if (!String.IsNullOrEmpty(userCommentData.CommentText)) userComment.CommentText = userCommentData.CommentText;
-            // userComment = _mapper.Map<UserComment>(userCommentData);
+
             var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentUpdateDto>(result);
         }
+        [Authorize]
         [HttpDelete]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
-            var result = await _commentRepository.RemoveCommentById(id);
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            var commentToRemove = await _commentRepository.GetCommentById(id);
+
+            if (commentToRemove is null) { return NotFound(); }
+
+            if (commentToRemove.User.Id != userId) { return Forbid(); }
+
+            var result = await _commentRepository.RemoveCommentById(commentToRemove);
             if (result is null) return NotFound();
             return _mapper.Map<UserCommentDto>(result);
         }

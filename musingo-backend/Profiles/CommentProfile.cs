@@ -11,6 +11,8 @@ namespace musingo_backend.Profiles
             CreateMap<UserComment, UserCommentDto>().ReverseMap();
             CreateMap<UserComment, UserCommentUpdateDto>();
             CreateMap<UserCommentUpdateDto, UserComment>();
+            CreateMap<UserCommentCreateDto, UserComment>();
+            CreateMap< UserComment, UserCommentCreateDto>();
         }
     }
 }

@@ -10,7 +10,7 @@ public interface ICommentRepository
     public Task<UserComment> GetCommentById(int id);
     public Task<UserComment> AddComment(UserComment userComment);
     public Task<UserComment> UpdateComment(UserComment userComment);
-    public Task<UserComment> RemoveCommentById(int id);
+    public Task<UserComment> RemoveCommentById(UserComment userComment);
     public Task<UserComment> IsCommented(int transactionId,int userId);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
@@ -47,11 +47,8 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
-    public async Task<UserComment> RemoveCommentById(int transactionId)
+    public async Task<UserComment> RemoveCommentById(UserComment userComment)
     {
-        var userComment = GetAll().FirstOrDefault(x => x.Id == transactionId);
-        if (userComment is null)
-            return userComment;
         var result = await RemoveAsync(userComment);
         return result;
     }
