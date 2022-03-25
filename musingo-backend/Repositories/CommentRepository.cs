@@ -35,7 +35,7 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
 
     public async Task<UserComment> IsCommented(int transactionId,int userId)
     {
-        var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == transactionId);
+        var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == transactionId && x.User.Id == userId);
         return result;
     }
 

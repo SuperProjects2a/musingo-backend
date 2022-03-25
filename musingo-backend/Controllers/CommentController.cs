@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Dtos;
@@ -33,6 +34,7 @@ namespace musingo_backend.Controllers
             }
             return NotFound();
         }
+        [Authorize]
         [HttpPost]
         public async Task<ActionResult<UserCommentDto>> AddComment(UserCommentDto userCommentData)
         {
@@ -43,16 +45,18 @@ namespace musingo_backend.Controllers
                 return Problem("Transaction not finished. You can't comment yet");
             }
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            if (userId != transaction.Buyer.Id || userId != transaction.Seller.Id)
+            if (userId != transaction.Buyer.Id && userId != transaction.Seller.Id)
             {
                 return Forbid();
             }
+
             var isCommented = await _commentRepository.IsCommented(transaction.Id,userId);
             if (isCommented is not null)
             {
                 return Problem("You can only comment once");
             }
             var comment = _mapper.Map<UserComment>(userCommentData);
+            comment.User = await _userRepository.GetUserById(userId);
             comment.Transaction = transaction;
             var result = await _commentRepository.AddComment(comment);
             return _mapper.Map<UserCommentDto>(result);
