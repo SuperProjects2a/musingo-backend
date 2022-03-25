@@ -33,7 +33,7 @@ namespace musingo_backend.Controllers
             }
             return NotFound();
         }
-        [HttpPost("add", Name = "AddComment")]
+        [HttpPost]
         public async Task<ActionResult<UserCommentDto>> AddComment(UserCommentDto userCommentData)
         {
             var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
@@ -60,7 +60,7 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.AddComment(comment);
             return _mapper.Map<UserCommentDto>(result);
         }
-        [HttpPost("update", Name = "UpdateComment")]
+        [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
             var userComment = await _commentRepository.GetCommentById(userCommentData.Id);
@@ -71,7 +71,7 @@ namespace musingo_backend.Controllers
             var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentUpdateDto>(result);
         }
-        [HttpDelete("delete", Name = "DeleteComment")]
+        [HttpDelete]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
             var result = await _commentRepository.RemoveCommentById(id);
