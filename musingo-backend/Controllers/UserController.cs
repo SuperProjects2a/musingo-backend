@@ -6,8 +6,6 @@ using musingo_backend.Authentication;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Repositories;
-using System.Security.Cryptography;
-using System.Text;
 
 namespace musingo_backend.Controllers;
 
@@ -57,21 +55,10 @@ public class UserController : ControllerBase
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<UserDto>> RegisterUser(UserRegisterDto userRegisterData)
     {
-        var source = userRegisterData.Email;
-        var md5 = "";
-        using (var md5Hash = MD5.Create())
-        {
-            var sourcebytes = Encoding.UTF8.GetBytes(source);
-            var hashbytes = md5Hash.ComputeHash(sourcebytes);
-
-            var hash = BitConverter.ToString(hashbytes).Replace("-", string.Empty);
-            md5 = hash;
-        }
             var user = _mapper.Map<User>(userRegisterData);
             var result = await _userRepository.AddUser(user);
             if (result is null) return ValidationProblem();
             return _mapper.Map<UserDto>(user);
-
     }
 
 }
