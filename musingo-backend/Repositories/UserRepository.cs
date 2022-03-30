@@ -43,6 +43,12 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<User?> AddUser(User user)
     {
+        var users = GetAll();
+        var withEmail = users.Where(x => x.Email == user.Email).ToList();
+        if (withEmail.Count > 0)
+        {
+            return null;
+        }
         user.Password = BCrypt.Net.BCrypt.HashPassword(user.Password);
         var result = await AddAsync(user);
         return result;
