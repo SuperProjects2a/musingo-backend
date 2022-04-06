@@ -52,5 +52,5 @@ public class UserRegisterDto
     // dane osobowe - niewymagane
     // public DateTime? Birth { get; set; } // wybieramy w kalendarzu na stronie czy cos
     // public string? Gender { get; set; } // wybieramy z listy
-
+    // zmiana
 }
