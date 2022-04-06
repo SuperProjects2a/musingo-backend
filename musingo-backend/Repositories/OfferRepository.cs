@@ -10,6 +10,8 @@ namespace musingo_backend.Repositories
         public Task<Offer?> GetOfferById(int id);
         public Task<Offer?> AddOffer(Offer offer);
         public Task<Offer?> UpdateOffer(Offer offer);
+
+        public Task<ICollection<Offer>> GetUserOffers(int userId);
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -36,6 +38,11 @@ namespace musingo_backend.Repositories
         public async Task<Offer?> UpdateOffer(Offer offer)
         {
             return await UpdateAsync(offer);
+        }
+
+        public async Task<ICollection<Offer>> GetUserOffers(int userId)
+        {
+            return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
         }
     }
 }

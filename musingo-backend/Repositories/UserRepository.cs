@@ -9,7 +9,6 @@ public interface IUserRepository
     public Task<User?> GetUserById(int id);
     public Task<User?> LoginUser(string login, string password);
     public Task<User?> AddUser(User user);
-
     public Task<double> GetAvg(int id);
 
 
@@ -35,7 +34,6 @@ public class UserRepository : Repository<User>, IUserRepository
         if (isValidPassword)
         {
             return result;
-
         }
         return null;
 
