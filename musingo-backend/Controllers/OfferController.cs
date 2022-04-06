@@ -66,7 +66,11 @@ namespace musingo_backend.Controllers
             offer.Title = offerUpdateDto.Title;
             offer.Cost = offerUpdateDto.Cost;
             offer.ImageUrl = offerUpdateDto.ImageUrl;
-            offer.OfferStatus = Enum.Parse<OfferStatus>(offerUpdateDto.OfferStatus);
+            if (Enum.TryParse<OfferStatus>(offerUpdateDto.OfferStatus, out var status)) offer.OfferStatus = status;
+            else return BadRequest();
+            if(Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
+            else return BadRequest();
+            
             offer.ItemCategory = Enum.Parse<ItemCategory>(offerUpdateDto.ItemCategory);
 
             var result = await _offerRepository.UpdateOffer(offer);
