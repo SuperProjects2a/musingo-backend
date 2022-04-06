@@ -20,8 +20,6 @@ namespace musingo_backend.Repositories
                 .Include(x => x.Buyer)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return result;
-
-
         }
     }
 }

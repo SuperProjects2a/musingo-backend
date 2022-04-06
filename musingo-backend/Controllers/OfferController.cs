@@ -53,5 +53,32 @@ namespace musingo_backend.Controllers
             var result = await _offerRepository.AddOffer(offer);
             return Ok(_mapper.Map<OfferDetailsDto>(result));
         }
+
+        [Authorize]
+        [HttpPut]
+        public async Task<ActionResult<OfferDetailsDto>> Update([FromBody] OfferUpdateDto offerUpdateDto)
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            var offer = await _offerRepository.GetOfferById(offerUpdateDto.Id);
+            if (offer is null) return NotFound();
+            if (offer.Owner?.Id != userId) return Forbid();
+            if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
+            {
+                return Forbid();
+            }
+
+            offer.Title = offerUpdateDto.Title;
+            offer.Cost = offerUpdateDto.Cost;
+            offer.ImageUrl = offerUpdateDto.ImageUrl;
+            if (Enum.TryParse<OfferStatus>(offerUpdateDto.OfferStatus, out var status)) offer.OfferStatus = status;
+            else return BadRequest();
+            if(Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
+            else return BadRequest();
+
+            offer.Description = offerUpdateDto.Description;
+
+            var result = await _offerRepository.UpdateOffer(offer);
+            return Ok(result);
+        }
     }
 }
