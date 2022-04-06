@@ -50,9 +50,33 @@ namespace musingo_backend.Controllers
             {
                 return Ok(_mapper.Map<ICollection<UserCommentDto>>(result));
             }
-
             return NotFound();
         }
+        [HttpGet("Ratings")]
+        public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserRatings()
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            var result = await _commentRepository.GetUserRatings(userId);
+            if (result is not null)
+            {
+                return Ok(_mapper.Map<ICollection<UserCommentDto>>(result));
+            }
+            return NotFound();
+        }
+        [HttpGet("Profile")]
+        public async Task<ActionResult<UserDetailsDto>> GetUserInfo()
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            var result = await _userRepository.GetUserById(userId);
+            if (result is not null)
+            {
+                var user = _mapper.Map<UserDetailsDto>(result);
+                user.AvgRating =await  _userRepository.GetAvg(userId);
+                return Ok(user);
+            }
+            return NotFound();
+        }
+
 
     }
 }

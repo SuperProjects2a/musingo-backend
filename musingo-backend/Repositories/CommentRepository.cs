@@ -14,6 +14,7 @@ public interface ICommentRepository
     public Task<UserComment> IsCommented(int transactionId,int userId);
 
     public Task<ICollection<UserComment>> GetUserComments(int userId);
+    public Task<ICollection<UserComment>> GetUserRatings(int userId);
 }
 public class CommentRepository:Repository<UserComment>, ICommentRepository
 {
@@ -43,14 +44,27 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
 
     public async Task<ICollection<UserComment>> GetUserComments(int userId)
     {
-        var result = await GetAll().Where(x => x.User.Id == userId).ToListAsync();
+        var result = await GetAll()
+            .Include(x=>x.Transaction)
+            .Include(x => x.User)
+            .Where(x => x.User.Id == userId).ToListAsync();
         return result;
+    }
+
+    public async Task<ICollection<UserComment>> GetUserRatings(int userId)
+    {
+        var result = await repositoryContext.UserComments
+            .Include(x=>x.User)
+            .Include(x=>x.Transaction)
+            .Where(x => x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId)
+            .Where(x => x.User.Id != userId)
+            .ToListAsync();
+        return result; 
     }
 
 
     public async Task<UserComment> UpdateComment(UserComment userComment)
     {
-        
         var result = await UpdateAsync(userComment);
         return result;
     }
