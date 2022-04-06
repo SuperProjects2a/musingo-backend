@@ -76,7 +76,18 @@ namespace musingo_backend.Controllers
             }
             return NotFound();
         }
-
+        [HttpPut]
+        public async Task<ActionResult<UserUpdateDto>> UpdateUser()
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+            var result = await _userRepository.GetUserById(userId);
+            if (result is not null)
+            {
+                var user = _mapper.Map<UserUpdateDto>(result);
+                return Ok(user);
+            }
+            return NotFound();
+        }
 
     }
 }
