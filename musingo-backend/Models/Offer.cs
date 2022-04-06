@@ -5,7 +5,8 @@ public enum OfferStatus
     Active,
     Reserved,
     Sold,
-    Inactive
+    Inactive,
+    Cancelled
 }
 
 public enum ItemCategory

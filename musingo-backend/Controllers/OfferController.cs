@@ -62,6 +62,10 @@ namespace musingo_backend.Controllers
             var offer = await _offerRepository.GetOfferById(offerUpdateDto.Id);
             if (offer is null) return NotFound();
             if (offer.Owner?.Id != userId) return Forbid();
+            if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
+            {
+                return Forbid();
+            }
 
             offer.Title = offerUpdateDto.Title;
             offer.Cost = offerUpdateDto.Cost;
