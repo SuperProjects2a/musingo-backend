@@ -4,10 +4,10 @@ namespace musingo_backend.Models;
 
 public enum Gender
 {
+    CombatHelicopter,
     Male,
     Female,
-    Undefined,
-    CombatHelicopter
+    Undefined
 }
 
 public class User
