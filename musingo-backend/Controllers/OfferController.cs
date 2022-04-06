@@ -74,8 +74,8 @@ namespace musingo_backend.Controllers
             else return BadRequest();
             if(Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
             else return BadRequest();
-            
-            offer.ItemCategory = Enum.Parse<ItemCategory>(offerUpdateDto.ItemCategory);
+
+            offer.Description = offerUpdateDto.Description;
 
             var result = await _offerRepository.UpdateOffer(offer);
             return Ok(result);
