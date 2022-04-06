@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Authentication;
 using musingo_backend.Dtos;
+using musingo_backend.Models;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
@@ -77,16 +78,76 @@ namespace musingo_backend.Controllers
             return NotFound();
         }
         [HttpPut]
-        public async Task<ActionResult<UserUpdateDto>> UpdateUser()
+        public async Task<ActionResult<UserDetailsDto>> UpdateUser(UserUpdateDto userUpdateDto)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
             var result = await _userRepository.GetUserById(userId);
-            if (result is not null)
+            if (result is null) { return NotFound(); }
+
+            if (!String.IsNullOrEmpty(userUpdateDto.Email))
             {
-                var user = _mapper.Map<UserUpdateDto>(result);
-                return Ok(user);
+                result.Email = userUpdateDto.Email;
             }
-            return NotFound();
+
+            if (!(String.IsNullOrEmpty(userUpdateDto.OldPassword)&& String.IsNullOrEmpty(userUpdateDto.NewPassword)))
+            {
+                if (!BCrypt.Net.BCrypt.Verify(userUpdateDto.OldPassword, result.Password))
+                {
+                    return Problem("Old password do not match");
+                }
+
+                if (BCrypt.Net.BCrypt.Verify(userUpdateDto.NewPassword, result.Password))
+                {
+                    return Problem("The new password cannot be the same as the old one");
+                }
+                result.Password = BCrypt.Net.BCrypt.HashPassword(userUpdateDto.NewPassword);
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.Name))
+            {
+                result.Name = userUpdateDto.Name;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.Surname))
+            {
+                result.Surname = userUpdateDto.Surname;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.ImageUrl))
+            {
+                result.ImageUrl = userUpdateDto.ImageUrl;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.PhoneNumber))
+            {
+                result.PhoneNumber = userUpdateDto.PhoneNumber;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.City))
+            {
+                result.City = userUpdateDto.City;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.Street))
+            {
+                result.Street = userUpdateDto.Street;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.HouseNumber))
+            {
+                result.HouseNumber = userUpdateDto.HouseNumber;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.PostCode))
+            {
+                result.PostCode = userUpdateDto.PostCode;
+            }
+            if (!String.IsNullOrEmpty(userUpdateDto.Gender))
+            {
+                result.Gender = Enum.Parse<Gender>(userUpdateDto.Gender);
+            }
+            if (userUpdateDto.Birth is not null)
+            {
+                result.Birth = userUpdateDto.Birth;
+            }
+
+
+            var user = await _userRepository.UpdateUser(result);
+
+            return _mapper.Map<UserDetailsDto>(user);
+
         }
 
     }
