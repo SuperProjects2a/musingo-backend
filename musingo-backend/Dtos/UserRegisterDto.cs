@@ -25,6 +25,8 @@ public class UserRegisterDto
 
     [Required(ErrorMessage = "This value is required.")]
     [RegularExpression(@"^[0-9]*$")]
+    [MaxLength(9)]
+    [MinLength(9)]
     public string PhoneNumber { get; set; }
 
     [Required(ErrorMessage = "This value is required.")]
