@@ -2,6 +2,14 @@ using Microsoft.EntityFrameworkCore;
 
 namespace musingo_backend.Models;
 
+public enum Gender
+{
+    CombatHelicopter,
+    Male,
+    Female,
+    Undefined
+}
+
 public class User
 {
     public int Id { get; set; }
@@ -15,6 +23,6 @@ public class User
     public string? Street { get; set; }
     public string? HouseNumber { get; set; }
     public string? PostCode { get; set; }
-    public string? Gender { get; set; }
+    public Gender Gender { get; set; }
     public DateTime? Birth { get; set; }
 }
