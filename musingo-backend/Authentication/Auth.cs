@@ -23,7 +23,8 @@ namespace musingo_backend.Authentication
                 Subject = new ClaimsIdentity(
                     new[]
                     {
-                        new Claim("id", user.Id.ToString())
+                        new Claim("id", user.Id.ToString()),
+                        new Claim("role",user.Role.ToString())
                     }),
                 Expires = DateTime.UtcNow.AddHours(2),
                 SigningCredentials = new SigningCredentials(
