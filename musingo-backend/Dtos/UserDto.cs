@@ -1,3 +1,5 @@
+using musingo_backend.Models;
+
 namespace musingo_backend.Dtos;
 
 public class UserDto
@@ -9,5 +11,6 @@ public class UserDto
     public string? ImageUrl { get; set; }
     public double AvgRating { get; set; }
     public string? PhoneNumber { get; set; }
+    public string? Role { get; set; }
 
 }
