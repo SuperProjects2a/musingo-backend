@@ -12,9 +12,9 @@ public enum Gender
 
 public enum Role
 {
-    Admin,
+    User,
     Moderator,
-    User
+    Admin
 }
 
 public class User
