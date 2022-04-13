@@ -22,7 +22,7 @@ public class OfferInteractionController : ControllerBase
     }
 
     [Authorize]
-    [HttpPut("{id}")]
+    [HttpPut("{offerId}")]
     public async Task<ActionResult<OfferDetailsDto>> WatchOffer(int offerId)
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -38,7 +38,7 @@ public class OfferInteractionController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("{id}")]
+    [HttpPatch("{offerId}")]
     public async Task<ActionResult<OfferDetailsDto>> RemoveOfferFromWatched(int offerId)
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);

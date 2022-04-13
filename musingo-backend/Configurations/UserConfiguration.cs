@@ -41,11 +41,18 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder
             .HasMany(u => u.WatchedOffers)
             .WithMany(o => o.Watchers)
-            .UsingEntity(x =>
-            {
-                x.HasNoKey();
-                x.ToTable("UserOfferWatch");
-            });
+            .UsingEntity<UserOfferWatch>(
+                x => 
+                    x.HasOne(y => y.Offer)
+                        .WithMany(y => y.UserOfferWatches)
+                        .HasForeignKey(y => y.OfferId)
+                        .OnDelete(DeleteBehavior.NoAction),
+                x => 
+                    x.HasOne(y => y.User)
+                        .WithMany(y => y.UserOfferWatches)
+                        .HasForeignKey(y => y.UserId)
+                        .OnDelete(DeleteBehavior.NoAction)
+                );
 
     }
 }
