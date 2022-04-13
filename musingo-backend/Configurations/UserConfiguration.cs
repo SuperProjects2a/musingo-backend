@@ -37,5 +37,15 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("image_url")
             .HasColumnType("nvarchar(MAX)")
             .IsRequired(false);
+
+        builder
+            .HasMany(u => u.WatchedOffers)
+            .WithMany(o => o.Watchers)
+            .UsingEntity(x =>
+            {
+                x.HasNoKey();
+                x.ToTable("UserOfferWatch");
+            });
+
     }
 }

@@ -33,5 +33,6 @@ public class Offer
     public string? Description { get; set; }
     public OfferStatus OfferStatus { get; set; }
     public ItemCategory ItemCategory { get; set; }
-    
+    public ICollection<User> Watchers { get; set; }
+
 }
