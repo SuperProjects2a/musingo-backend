@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Commands;
 using musingo_backend.Dtos;
+using musingo_backend.Queries;
 
 namespace musingo_backend.Controllers;
 
@@ -52,5 +53,19 @@ public class OfferInteractionController : ControllerBase
         return Ok(_mapper.Map<OfferDetailsDto>(result));
 
     }
-    
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<OfferDto>>> GetUsersWatchedOffers()
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new GetOffersWatchedByUserQuery()
+        {
+            UserId = userId
+        };
+
+        var result = await _mediator.Send(request);
+        return Ok(_mapper.Map<IEnumerable<OfferDto>>(result));
+    }
+
 }
