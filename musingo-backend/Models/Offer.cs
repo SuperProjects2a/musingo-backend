@@ -34,5 +34,6 @@ public class Offer
     public OfferStatus OfferStatus { get; set; }
     public ItemCategory ItemCategory { get; set; }
     public DateTime? CreateTime { get; set; }
-    
+    public ICollection<User> Watchers { get; set; }
+    public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
 }
