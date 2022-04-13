@@ -8,13 +8,13 @@ public class UserRegisterDto
 
     // dane osobowe - wymagane
     [Required(ErrorMessage = "This value is required.")]
-    [RegularExpression(@"^[a-zA-Z��󳿟���ӯ��ѣ�]{3,24}")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,24}")]
     [MaxLength(24)]
     [MinLength(3)]
     public string Name { get; set; }
 
     [Required(ErrorMessage = "This value is required.")]
-    [RegularExpression(@"^[a-zA-Z��󳿟���ӯ��ѣ�]{3,24}")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,24}")]
     [MaxLength(24)]
     [MinLength(3)]
     public string Surname { get; set; }
@@ -40,7 +40,7 @@ public class UserRegisterDto
 
     //public string City { get; set; } // wybieramy z listy
 
-    //[RegularExpression(@"^[a-zA-Z��󳿟���ӯ��ѣ�]{3,24}")]
+    //[RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,24}")]
     //public string Street { get; set; }
 
     //[RegularExpression(@"^[0-9]*$")]
@@ -52,5 +52,5 @@ public class UserRegisterDto
     // dane osobowe - niewymagane
     // public DateTime? Birth { get; set; } // wybieramy w kalendarzu na stronie czy cos
     // public string? Gender { get; set; } // wybieramy z listy
-    // zmiana
+    // zmiana super ultra angielski system 123
 }
