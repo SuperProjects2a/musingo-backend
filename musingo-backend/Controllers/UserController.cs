@@ -24,7 +24,6 @@ public class UserController : ControllerBase
         _userRepository = userRepository;
         _jwtAuth = jwtAuth;
     }
-    [Authorize(Roles = "Admin")]
     [HttpGet("{id}", Name = "GetUserById")]
     public async Task<ActionResult<UserDto>> GetPlatformById(int id)
     {
