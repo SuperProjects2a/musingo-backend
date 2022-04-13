@@ -35,4 +35,22 @@ public class OfferInteractionController : ControllerBase
         return _mapper.Map<OfferDetailsDto>(result);
 
     }
+
+    [Authorize]
+    [HttpPatch("{id}")]
+    public async Task<ActionResult<OfferDetailsDto>> RemoveOfferFromWatched(int offerId)
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new RemoveOfferFromWatchedCommand()
+        {
+            OfferId = offerId,
+            UserId = userId
+        };
+
+        var result = await _mediator.Send(request);
+        if (result is null) return NotFound();
+        return Ok(_mapper.Map<OfferDetailsDto>(result));
+
+    }
+    
 }
