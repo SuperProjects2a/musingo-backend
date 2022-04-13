@@ -28,10 +28,10 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet]
-        public async Task<ActionResult<OfferDto>> GetOfferByCategory(ItemCategory category)
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByFilter(string? search,string? category,double? priceFrom,double? priceTo,string? sorting)
         {
-            var offers = await _offerRepository.GetOfferByCategory(category);
-            return _mapper.Map<OfferDto>(offers);
+            var offers = await _offerRepository.GetOfferByFilter(search,category,priceFrom,priceTo,sorting);
+            return Ok(_mapper.Map<ICollection<OfferDto>>(offers));
         }
     }
 }

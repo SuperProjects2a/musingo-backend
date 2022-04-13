@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using musingo_backend.Data;
+using musingo_backend.Dtos;
 using musingo_backend.Models;
 
 namespace musingo_backend.Repositories
@@ -12,7 +13,7 @@ namespace musingo_backend.Repositories
         public Task<Offer?> UpdateOffer(Offer offer);
         public Task<ICollection<Offer>> GetUserOffers(int userId);
 
-        public Task<ICollection<Offer>> GetOfferByCategory(ItemCategory category);
+        public Task<ICollection<Offer>> GetOfferByFilter(string? search, string? category, double? priceFrom, double? priceTo, string? sorting);
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -46,9 +47,24 @@ namespace musingo_backend.Repositories
             return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
         }
 
-        public async Task<ICollection<Offer>> GetOfferByCategory(ItemCategory category)
+        public async Task<ICollection<Offer>> GetOfferByFilter(string? search,string? category,double? priceFrom,double? priceTo,string? sorting)
         {
-            return await GetAll().Where(x => x.ItemCategory == category && x.OfferStatus == OfferStatus.Active).ToListAsync();
+            IQueryable<Offer> query = GetAll().Where(x=>x.OfferStatus == OfferStatus.Active);
+
+            if (!string.IsNullOrWhiteSpace(search))
+                query = query.Where(x => x.Title.Contains(search));
+
+            if (!string.IsNullOrWhiteSpace(category))
+                query = query.Where(x => x.ItemCategory == Enum.Parse<ItemCategory>(category));
+
+            if (priceFrom is not null)
+                query = query.Where(x => x.Cost >= priceFrom);
+
+            if (priceTo is not null)
+                query = query.Where(x => x.Cost <= priceTo);
+
+
+            return await query.ToListAsync();
         }
     }
 }
