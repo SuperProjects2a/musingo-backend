@@ -24,6 +24,7 @@ public class AddOfferToWatchedHandler : IRequestHandler<AddOfferToWatchedCommand
         if (offers.Any(x => x.Id == request.OfferId)) return null;
         var offerToAdd = await _offerRepository.GetOfferById(request.OfferId);
         if (offerToAdd is null) return null;
+        if (offerToAdd.Owner?.Id == request.UserId) return null;
         
         user.WatchedOffers.Add(offerToAdd);
         await _userRepository.UpdateUser(user);

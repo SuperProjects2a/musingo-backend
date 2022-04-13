@@ -38,7 +38,7 @@ public class OfferInteractionController : ControllerBase
     }
 
     [Authorize]
-    [HttpPatch("watch/{offerId}")]
+    [HttpDelete("watch/{offerId}")]
     public async Task<ActionResult<OfferDetailsDto>> RemoveOfferFromWatched(int offerId)
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
