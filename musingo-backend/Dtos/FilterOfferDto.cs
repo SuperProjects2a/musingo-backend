@@ -9,6 +9,7 @@ namespace musingo_backend.Dtos;
 public enum Sorting
 {
     Latest,
+    Oldest,
     Ascending,
     Descending
 }

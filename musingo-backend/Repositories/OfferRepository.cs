@@ -66,16 +66,22 @@ namespace musingo_backend.Repositories
             switch (filter.Sorting)
             {
                 case nameof(Sorting.Latest):
+                    query = query.OrderByDescending(x => x.CreateTime);
+                    break;
+                case nameof(Sorting.Oldest):
+                    query = query.OrderBy(x => x.CreateTime);
                     break;
                 case nameof(Sorting.Ascending):
+                    query = query.OrderBy(x => x.Cost);
                     break;
                 case nameof(Sorting.Descending):
+                    query = query.OrderBy(x => x.Cost);
                     break;
             }
            
 
 
-            return await query.ToListAsync();
+            return await query.OrderBy(x => x.Cost).ToListAsync();
         }
     }
 }

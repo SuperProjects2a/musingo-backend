@@ -23,11 +23,11 @@ namespace musingo_backend.Controllers
             _userRepository = userRepository;
         }
 
-        [HttpGet]//string? search,string? category,double? priceFrom,double? priceTo,string? sorting
+        [HttpGet]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByFilter([FromQuery]FilterOfferDto filterDto)
         {
             var offers = await _offerRepository.GetOfferByFilter(filterDto);
-            return Ok(_mapper.Map<ICollection<OfferDto>>(offers));
+            return Ok(_mapper.Map<ICollection<OfferDetailsDto>>(offers));
         }
     }
 }
