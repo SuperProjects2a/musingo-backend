@@ -15,22 +15,18 @@ namespace musingo_backend.Controllers
         private IMapper _mapper;
         private IOfferRepository _offerRepository;
         private IUserRepository _userRepository;
-        private ICommentRepository _commentRepository;
-        private IJwtAuth _jwtAuth;
 
-        public FilterController(IMapper mapper, IOfferRepository offerRepository, IUserRepository userRepository, ICommentRepository commentRepository, IJwtAuth jwtAuth)
+        public FilterController(IMapper mapper, IOfferRepository offerRepository, IUserRepository userRepository)
         {
             _mapper = mapper;
             _offerRepository = offerRepository;
             _userRepository = userRepository;
-            _commentRepository = commentRepository;
-            _jwtAuth = jwtAuth;
         }
 
-        [HttpGet]
-        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByFilter(string? search,string? category,double? priceFrom,double? priceTo,string? sorting)
+        [HttpGet]//string? search,string? category,double? priceFrom,double? priceTo,string? sorting
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByFilter([FromQuery]FilterOfferDto filterDto)
         {
-            var offers = await _offerRepository.GetOfferByFilter(search,category,priceFrom,priceTo,sorting);
+            var offers = await _offerRepository.GetOfferByFilter(filterDto);
             return Ok(_mapper.Map<ICollection<OfferDto>>(offers));
         }
     }

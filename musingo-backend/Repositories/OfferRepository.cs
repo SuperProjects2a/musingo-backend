@@ -13,7 +13,7 @@ namespace musingo_backend.Repositories
         public Task<Offer?> UpdateOffer(Offer offer);
         public Task<ICollection<Offer>> GetUserOffers(int userId);
 
-        public Task<ICollection<Offer>> GetOfferByFilter(string? search, string? category, double? priceFrom, double? priceTo, string? sorting);
+        public Task<ICollection<Offer>> GetOfferByFilter(FilterOfferDto filter);
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -47,21 +47,23 @@ namespace musingo_backend.Repositories
             return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
         }
 
-        public async Task<ICollection<Offer>> GetOfferByFilter(string? search,string? category,double? priceFrom,double? priceTo,string? sorting)
+        public async Task<ICollection<Offer>> GetOfferByFilter(FilterOfferDto filter)
         {
             IQueryable<Offer> query = GetAll().Where(x=>x.OfferStatus == OfferStatus.Active);
 
-            if (!string.IsNullOrWhiteSpace(search))
-                query = query.Where(x => x.Title.Contains(search));
+            if (!string.IsNullOrWhiteSpace(filter.Search))
+                query = query.Where(x => x.Title.Contains(filter.Search));
 
-            if (!string.IsNullOrWhiteSpace(category))
-                query = query.Where(x => x.ItemCategory == Enum.Parse<ItemCategory>(category));
+            if (!string.IsNullOrWhiteSpace(filter.Category))
+                query = query.Where(x => x.ItemCategory == Enum.Parse<ItemCategory>(filter.Category));
 
-            if (priceFrom is not null)
-                query = query.Where(x => x.Cost >= priceFrom);
+            if (filter.PriceFrom is not null)
+                query = query.Where(x => x.Cost >= filter.PriceFrom);
 
-            if (priceTo is not null)
-                query = query.Where(x => x.Cost <= priceTo);
+            if (filter.PriceTo is not null)
+                query = query.Where(x => x.Cost <= filter.PriceTo);
+
+           
 
 
             return await query.ToListAsync();
