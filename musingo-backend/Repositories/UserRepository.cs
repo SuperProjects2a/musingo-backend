@@ -23,7 +23,7 @@ public class UserRepository : Repository<User>, IUserRepository
 
     public async Task<User?> GetUserById(int id)
     {
-        var result = await GetAll().FirstOrDefaultAsync(x => x.Id == id);
+        var result = await GetAll().Include(x => x.WatchedOffers).FirstOrDefaultAsync(x => x.Id == id);
         return result;
     }
 

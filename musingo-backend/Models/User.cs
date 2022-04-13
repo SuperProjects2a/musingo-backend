@@ -25,4 +25,5 @@ public class User
     public string? PostCode { get; set; }
     public Gender Gender { get; set; }
     public DateTime? Birth { get; set; }
+    public ICollection<Offer> WatchedOffers { get; set; }
 }
