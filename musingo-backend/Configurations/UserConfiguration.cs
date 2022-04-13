@@ -37,5 +37,22 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnName("image_url")
             .HasColumnType("nvarchar(MAX)")
             .IsRequired(false);
+
+        builder
+            .HasMany(u => u.WatchedOffers)
+            .WithMany(o => o.Watchers)
+            .UsingEntity<UserOfferWatch>(
+                x => 
+                    x.HasOne(y => y.Offer)
+                        .WithMany(y => y.UserOfferWatches)
+                        .HasForeignKey(y => y.OfferId)
+                        .OnDelete(DeleteBehavior.NoAction),
+                x => 
+                    x.HasOne(y => y.User)
+                        .WithMany(y => y.UserOfferWatches)
+                        .HasForeignKey(y => y.UserId)
+                        .OnDelete(DeleteBehavior.NoAction)
+                );
+
     }
 }
