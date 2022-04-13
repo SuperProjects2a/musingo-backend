@@ -60,5 +60,4 @@ public class UserController : ControllerBase
             if (result is null) return ValidationProblem();
             return _mapper.Map<UserDto>(user);
     }
-
 }

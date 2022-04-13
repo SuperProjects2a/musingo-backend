@@ -10,6 +10,13 @@ public enum Gender
     Undefined
 }
 
+public enum Role
+{
+    User,
+    Moderator,
+    Admin
+}
+
 public class User
 {
     public int Id { get; set; }
@@ -25,4 +32,5 @@ public class User
     public string? PostCode { get; set; }
     public Gender Gender { get; set; }
     public DateTime? Birth { get; set; }
+    public Role Role { get; set; }
 }
