@@ -10,6 +10,13 @@ public enum Gender
     Undefined
 }
 
+public enum Role
+{
+    User,
+    Moderator,
+    Admin
+}
+
 public class User
 {
     public int Id { get; set; }
@@ -27,4 +34,5 @@ public class User
     public DateTime? Birth { get; set; }
     public ICollection<Offer> WatchedOffers { get; set; }
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
+    public Role Role { get; set; }
 }

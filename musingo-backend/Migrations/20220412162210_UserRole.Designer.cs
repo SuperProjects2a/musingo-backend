@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using musingo_backend.Data;
 
@@ -11,9 +12,10 @@ using musingo_backend.Data;
 namespace musingo_backend.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220412162210_UserRole")]
+    partial class UserRole
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -202,21 +204,6 @@ namespace musingo_backend.Migrations
                     b.ToTable("user_comments", (string)null);
                 });
 
-            modelBuilder.Entity("musingo_backend.Models.UserOfferWatch", b =>
-                {
-                    b.Property<int>("OfferId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("UserId")
-                        .HasColumnType("int");
-
-                    b.HasKey("OfferId", "UserId");
-
-                    b.HasIndex("UserId");
-
-                    b.ToTable("UserOfferWatch");
-                });
-
             modelBuilder.Entity("musingo_backend.Models.Offer", b =>
                 {
                     b.HasOne("musingo_backend.Models.User", "Owner")
@@ -262,35 +249,6 @@ namespace musingo_backend.Migrations
                     b.Navigation("Transaction");
 
                     b.Navigation("User");
-                });
-
-            modelBuilder.Entity("musingo_backend.Models.UserOfferWatch", b =>
-                {
-                    b.HasOne("musingo_backend.Models.Offer", "Offer")
-                        .WithMany("UserOfferWatches")
-                        .HasForeignKey("OfferId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.HasOne("musingo_backend.Models.User", "User")
-                        .WithMany("UserOfferWatches")
-                        .HasForeignKey("UserId")
-                        .OnDelete(DeleteBehavior.NoAction)
-                        .IsRequired();
-
-                    b.Navigation("Offer");
-
-                    b.Navigation("User");
-                });
-
-            modelBuilder.Entity("musingo_backend.Models.Offer", b =>
-                {
-                    b.Navigation("UserOfferWatches");
-                });
-
-            modelBuilder.Entity("musingo_backend.Models.User", b =>
-                {
-                    b.Navigation("UserOfferWatches");
                 });
 #pragma warning restore 612, 618
         }
