@@ -1,5 +1,6 @@
 ﻿using System.ComponentModel;
 using System.ComponentModel.DataAnnotations;
+using Microsoft.OpenApi.Extensions;
 using musingo_backend.CustomValidation;
 using musingo_backend.Models;
 
@@ -25,6 +26,6 @@ public class FilterOfferDto
     public double? PriceTo { get; set; }
 
     [EnumDataType(typeof(Sorting))]
-    [DefaultValue(Dtos.Sorting.Latest)]
+    [DefaultValue(nameof(Dtos.Sorting.Latest))]
     public string? Sorting { get; set; }
 }

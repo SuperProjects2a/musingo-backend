@@ -50,5 +50,10 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("item_category")
             .HasColumnType("nvarchar(30)")
             .IsRequired();
+
+        builder.Property(x => x.CreateTime)
+            .HasColumnName("create_time")
+            .HasColumnType("datetime")
+            .HasDefaultValueSql("CAST( GETDATE() AS DateTime )");
     }
 }

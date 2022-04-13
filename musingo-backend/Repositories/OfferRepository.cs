@@ -63,6 +63,15 @@ namespace musingo_backend.Repositories
             if (filter.PriceTo is not null)
                 query = query.Where(x => x.Cost <= filter.PriceTo);
 
+            switch (filter.Sorting)
+            {
+                case nameof(Sorting.Latest):
+                    break;
+                case nameof(Sorting.Ascending):
+                    break;
+                case nameof(Sorting.Descending):
+                    break;
+            }
            
 
 

@@ -10,5 +10,7 @@
         public string ItemCategory { get; set; }
         public UserDto Owner { get; set; }
         public string Description { get; set; }
+
+        public DateTime CreateTime { get; set; }
     }
 }
