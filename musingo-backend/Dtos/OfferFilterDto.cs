@@ -13,7 +13,7 @@ public enum Sorting
     Ascending,
     Descending
 }
-public class FilterOfferDto
+public class OfferFilterDto
 {
     [MaxLength(50)]
     [DefaultValue("")]

@@ -25,7 +25,7 @@ namespace musingo_backend.Controllers
             _userRepository = userRepository;
         }
         [HttpGet]
-        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] FilterOfferDto filterDto)
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
             var offers = await _offerRepository.GetOfferByFilter(filterDto);
             return Ok(_mapper.Map<ICollection<OfferDetailsDto>>(offers));
