@@ -49,7 +49,7 @@ namespace musingo_backend.Repositories
 
         public async Task<ICollection<Offer>> GetOfferByFilter(FilterOfferDto filter)
         {
-            IQueryable<Offer> query = GetAll().Where(x=>x.OfferStatus == OfferStatus.Active);
+            var query = GetAll().Where(x=>x.OfferStatus == OfferStatus.Active);
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
                 query = query.Where(x => x.Title.Contains(filter.Search));
@@ -78,9 +78,7 @@ namespace musingo_backend.Repositories
                     query = query.OrderBy(x => x.Cost);
                     break;
             }
-           
-
-
+            
             return await query.OrderBy(x => x.Cost).ToListAsync();
         }
     }

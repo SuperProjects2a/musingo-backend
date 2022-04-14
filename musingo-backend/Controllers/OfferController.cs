@@ -24,12 +24,11 @@ namespace musingo_backend.Controllers
             _jwtAuth = jwt;
             _userRepository = userRepository;
         }
-
         [HttpGet]
-        public async Task<ActionResult<ICollection<OfferDto>>> GetAll()
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] FilterOfferDto filterDto)
         {
-            var result = await _offerRepository.GetAllOffers();
-            return Ok(_mapper.Map<ICollection<OfferDto>>(result));
+            var offers = await _offerRepository.GetOfferByFilter(filterDto);
+            return Ok(_mapper.Map<ICollection<OfferDetailsDto>>(offers));
         }
 
         [HttpGet("{id}")]
@@ -80,5 +79,7 @@ namespace musingo_backend.Controllers
             var result = await _offerRepository.UpdateOffer(offer);
             return Ok(result);
         }
+
+       
     }
 }
