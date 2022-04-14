@@ -80,7 +80,7 @@ namespace musingo_backend.Repositories
                     break;
             }
             
-            return await query.OrderBy(x => x.Cost).ToListAsync();
+            return await query.ToListAsync();
         }
     }
 }
