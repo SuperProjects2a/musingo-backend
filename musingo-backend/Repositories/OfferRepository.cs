@@ -49,7 +49,8 @@ namespace musingo_backend.Repositories
 
         public async Task<ICollection<Offer>> GetOfferByFilter(OfferFilterDto filter)
         {
-            var query = GetAll().Where(x=>x.OfferStatus == OfferStatus.Active);
+            var query = GetAll().Include(x=>x.Owner)
+                .Where(x=>x.OfferStatus == OfferStatus.Active);
 
             if (!string.IsNullOrWhiteSpace(filter.Search))
                 query = query.Where(x => x.Title.Contains(filter.Search));
