@@ -143,7 +143,6 @@ namespace musingo_backend.Controllers
                 result.Birth = userUpdateDto.Birth;
             }
 
-
             var user = await _userRepository.UpdateUser(result);
 
             return _mapper.Map<UserDetailsDto>(user);

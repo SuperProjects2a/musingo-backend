@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using musingo_backend.Data;
+using musingo_backend.Dtos;
 using musingo_backend.Models;
 
 namespace musingo_backend.Repositories
@@ -10,8 +11,9 @@ namespace musingo_backend.Repositories
         public Task<Offer?> GetOfferById(int id);
         public Task<Offer?> AddOffer(Offer offer);
         public Task<Offer?> UpdateOffer(Offer offer);
-
         public Task<ICollection<Offer>> GetUserOffers(int userId);
+
+        public IQueryable<Offer> GetAllActiveOffers();
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -43,6 +45,11 @@ namespace musingo_backend.Repositories
         public async Task<ICollection<Offer>> GetUserOffers(int userId)
         {
             return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
+        }
+
+        public IQueryable<Offer> GetAllActiveOffers()
+        {
+            return  GetAll().Include(x => x.Owner).Where(x => x.OfferStatus == OfferStatus.Active);
         }
     }
 }
