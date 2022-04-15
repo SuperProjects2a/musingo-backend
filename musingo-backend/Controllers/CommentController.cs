@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Queries;
@@ -40,7 +41,7 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is  null)
+            if (result is null)
             {
                 return NotFound();
             }
@@ -51,27 +52,18 @@ namespace musingo_backend.Controllers
         [HttpPost]
         public async Task<ActionResult<UserCommentCreateDto>> AddComment(UserCommentCreateDto userCommentData)
         {
-            var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
-            if (transaction is null) return NotFound();
-            if (transaction.Status != TransactionStatus.Finished)
-            {
-                return Problem("Transaction not finished. You can't comment yet");
-            }
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            if (userId != transaction.Buyer.Id && userId != transaction.Seller.Id)
+            var request = new AddCommentCommand()
             {
-                return Forbid();
-            }
+                CommentText = userCommentData.CommentText,
+                Rating = userCommentData.Rating,
+                TransactionId = userCommentData.TransactionId,
+                UserId = userId
+            };
+            var result = await _mediator.Send(request);
+            if (result is null)
+                return NotFound();
 
-            var isCommented = await _commentRepository.IsCommented(transaction.Id, userId);
-            if (isCommented is not null)
-            {
-                return Problem("You can only comment once");
-            }
-            var comment = _mapper.Map<UserComment>(userCommentData);
-            comment.User = await _userRepository.GetUserById(userId);
-            comment.Transaction = transaction;
-            var result = await _commentRepository.AddComment(comment);
             return _mapper.Map<UserCommentCreateDto>(result);
         }
         [HttpPut]
