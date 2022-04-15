@@ -22,10 +22,8 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
     public async Task<UserComment> GetCommentById(int id)
     {
        var result = await GetAll()
+           .Include(x=>x.User)
            .Include(x=>x.Transaction)
-           .ThenInclude(x=>x.Seller)
-           .Include(x=>x.Transaction)
-           .ThenInclude(x=>x.Buyer)
            .FirstOrDefaultAsync(x=>x.Id == id);
        return result;
     }

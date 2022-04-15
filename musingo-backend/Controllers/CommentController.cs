@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
+using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
@@ -17,25 +19,33 @@ namespace musingo_backend.Controllers
         private readonly ITransactionRepository _transactionRepository;
         private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IUserRepository userRepository, IMapper mapper)
+        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IUserRepository userRepository, IMapper mapper, IMediator mediator)
         {
             _commentRepository = commentRepository;
             _mapper = mapper;
             _transactionRepository = transactionRepository;
             _userRepository = userRepository;
+            _mediator = mediator;
         }
-
+        [AllowAnonymous]
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {
-            var result = await _commentRepository.GetCommentById(id);
-            if (result is not null)
+            var request = new GetCommentByIdQuery
             {
-                return Ok(_mapper.Map<UserCommentDto>(result));
-            }
+                CommentId = id
+            };
 
-            return NotFound();
+            var result = await _mediator.Send(request);
+
+            if (result is  null)
+            {
+                return NotFound();
+            }
+            return Ok(_mapper.Map<UserCommentDto>(result));
+            
         }
 
         [HttpPost]
