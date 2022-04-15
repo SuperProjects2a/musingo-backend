@@ -7,13 +7,13 @@ public class UserRegisterDto
 {
     // dane osobowe - wymagane
     [Required(ErrorMessage = "This value is required.")]
-    [RegularExpression(@"^[a-zA-Z��󳿟���ӯ��ѣ�]{3,24}")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}")]
     [MaxLength(24)]
     [MinLength(3)]
     public string Name { get; set; }
 
     [Required(ErrorMessage = "This value is required.")]
-    [RegularExpression(@"^[a-zA-Z��󳿟���ӯ��ѣ�]{3,24}")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}")]
     [MaxLength(24)]
     [MinLength(3)]
     public string Surname { get; set; }
