@@ -39,7 +39,7 @@ namespace musingo_backend.Controllers
                 PriceTo = filterDto.PriceTo,
                 Sorting = filterDto.Sorting
             };
-
+            //test comita z terminala
             var result = await _mediator.Send(request);
             return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result));
         }
