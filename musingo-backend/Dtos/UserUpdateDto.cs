@@ -13,12 +13,12 @@ public class UserUpdateDto
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
-    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,24}")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}")]
     public string Name { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
-    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,24}$")]
+    [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}$")]
     public string? Surname { get; set; }
 
     [Required(AllowEmptyStrings = true)]
