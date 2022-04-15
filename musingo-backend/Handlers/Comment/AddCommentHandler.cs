@@ -9,13 +9,13 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
 {
     private readonly IUserRepository _userRepository;
     private readonly ITransactionRepository _transactionRepository;
-    private readonly ICommentRepository _commentRepository;
+    private readonly IUserCommentRepository _userCommentRepository;
 
-    public AddCommentHandler(IUserRepository userRepository, ITransactionRepository transactionRepository, ICommentRepository commentRepository)
+    public AddCommentHandler(IUserRepository userRepository, ITransactionRepository transactionRepository, IUserCommentRepository userCommentRepository)
     {
         _userRepository = userRepository;
         _transactionRepository = transactionRepository;
-        _commentRepository = commentRepository;
+        _userCommentRepository = userCommentRepository;
     }
 
     public async Task<UserComment?> Handle(AddCommentCommand request, CancellationToken cancellationToken)
@@ -31,7 +31,7 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
             return null;
         }
 
-        var isCommented = await _commentRepository.IsCommented(transaction.Id, request.UserId);
+        var isCommented = await _userCommentRepository.IsCommented(transaction.Id, request.UserId);
         if (isCommented is not null)
         {
             return null;
@@ -48,7 +48,7 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
         if (comment.User is null)
             return null;
 
-        await _commentRepository.AddComment(comment);
+        await _userCommentRepository.AddComment(comment);
 
         return comment;
     }

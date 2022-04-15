@@ -7,22 +7,22 @@ namespace musingo_backend.Handlers;
 
 public class RemoveCommentHandler: IRequestHandler<RemoveCommentCommand,UserComment?>
 {
-    private readonly ICommentRepository _commentRepository;
+    private readonly IUserCommentRepository _userCommentRepository;
 
-    public RemoveCommentHandler(ICommentRepository commentRepository)
+    public RemoveCommentHandler(IUserCommentRepository userCommentRepository)
     {
-        _commentRepository = commentRepository;
+        _userCommentRepository = userCommentRepository;
     }
 
     public async Task<UserComment?> Handle(RemoveCommentCommand request, CancellationToken cancellationToken)
     {
-        var commentToRemove = await _commentRepository.GetCommentById(request.CommentId);
+        var commentToRemove = await _userCommentRepository.GetCommentById(request.CommentId);
 
         if (commentToRemove is null) return null;
 
         if (commentToRemove.User.Id != request.UserId) return null;
 
-        var result = await _commentRepository.RemoveComment(commentToRemove);
+        var result = await _userCommentRepository.RemoveComment(commentToRemove);
 
         return commentToRemove;
     }

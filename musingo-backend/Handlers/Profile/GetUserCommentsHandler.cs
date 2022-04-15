@@ -7,15 +7,15 @@ namespace musingo_backend.Handlers;
 
 public class GetUserCommentsHandler: IRequestHandler<GetUserCommentsQuery,ICollection<UserComment>?>
 {
-    private readonly ICommentRepository _commentRepository;
+    private readonly IUserCommentRepository _userCommentRepository;
 
-    public GetUserCommentsHandler(ICommentRepository commentRepository)
+    public GetUserCommentsHandler(IUserCommentRepository userCommentRepository)
     {
-        _commentRepository = commentRepository;
+        _userCommentRepository = userCommentRepository;
     }
 
     public async Task<ICollection<UserComment>?> Handle(GetUserCommentsQuery request, CancellationToken cancellationToken)
     {
-        return await _commentRepository.GetUserComments(request.UserId);
+        return await _userCommentRepository.GetUserComments(request.UserId);
     }
 }

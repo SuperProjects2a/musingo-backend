@@ -5,7 +5,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Repositories;
 
-public interface ICommentRepository
+public interface IUserCommentRepository
 {
     public Task<UserComment> GetCommentById(int id);
     public Task<UserComment> AddComment(UserComment userComment);
@@ -16,9 +16,9 @@ public interface ICommentRepository
     public Task<ICollection<UserComment>> GetUserComments(int userId);
     public Task<ICollection<UserComment>> GetUserRatings(int userId);
 }
-public class CommentRepository:Repository<UserComment>, ICommentRepository
+public class UserUserCommentRepository:Repository<UserComment>, IUserCommentRepository
 {
-    public CommentRepository(RepositoryContext context) : base(context) { }
+    public UserUserCommentRepository(RepositoryContext context) : base(context) { }
     public async Task<UserComment> GetCommentById(int id)
     {
        var result = await GetAll()

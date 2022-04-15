@@ -8,17 +8,17 @@ namespace musingo_backend.Handlers;
 public class UpdateCommentHandler: IRequestHandler<UpdateCommentCommand,UserComment?>
 {
     private readonly IUserRepository _userRepository;
-    private readonly ICommentRepository _commentRepository;
+    private readonly IUserCommentRepository _userCommentRepository;
 
-    public UpdateCommentHandler(IUserRepository userRepository, ICommentRepository commentRepository)
+    public UpdateCommentHandler(IUserRepository userRepository, IUserCommentRepository userCommentRepository)
     {
         _userRepository = userRepository;
-        _commentRepository = commentRepository;
+        _userCommentRepository = userCommentRepository;
     }
 
     public async Task<UserComment?> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
-        var userComment = await _commentRepository.GetCommentById(request.CommentId);
+        var userComment = await _userCommentRepository.GetCommentById(request.CommentId);
 
         if (userComment is null) return null;
 
@@ -28,7 +28,7 @@ public class UpdateCommentHandler: IRequestHandler<UpdateCommentCommand,UserComm
 
         if (!String.IsNullOrEmpty(request.CommentText)) userComment.CommentText = request.CommentText;
 
-         await _commentRepository.UpdateComment(userComment);
+         await _userCommentRepository.UpdateComment(userComment);
 
          return userComment;
     }
