@@ -16,20 +16,15 @@ namespace musingo_backend.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly ICommentRepository _commentRepository;
-        private readonly ITransactionRepository _transactionRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
 
-        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IUserRepository userRepository, IMapper mapper, IMediator mediator)
+        public CommentController(IMapper mapper, IMediator mediator)
         {
-            _commentRepository = commentRepository;
             _mapper = mapper;
-            _transactionRepository = transactionRepository;
-            _userRepository = userRepository;
             _mediator = mediator;
         }
+
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {

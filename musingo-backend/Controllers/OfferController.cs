@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Authentication;
+using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Queries;
@@ -46,8 +47,15 @@ namespace musingo_backend.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
-            var result = await _offerRepository.GetOfferById(id);
-            if (result is null) return NotFound();
+            var request = new GetOfferByIdQuery()
+            {
+                Id = id
+            };
+            var result = await _mediator.Send(request);
+
+            if (result is null)
+                return NotFound();
+
             return Ok(_mapper.Map<OfferDetailsDto>(result));
         }
 
@@ -56,12 +64,21 @@ namespace musingo_backend.Controllers
         public async Task<ActionResult<OfferDetailsDto>> Add([FromBody] OfferCreateDto offerCreateDto)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            var user = await _userRepository.GetUserById(userId);
-            var offer = _mapper.Map<Offer>(offerCreateDto);
-            offer.Owner = user;
-            offer.OfferStatus = OfferStatus.Active;
 
-            var result = await _offerRepository.AddOffer(offer);
+            var request = new AddOfferCommand()
+            {
+                UserId = userId,
+                Title = offerCreateDto.Title,
+                Cost = offerCreateDto.Cost,
+                Description = offerCreateDto.Description,
+                ItemCategory = offerCreateDto.ItemCategory
+            };
+
+            var result = await _mediator.Send(request);
+
+            if (result is null)
+                return NotFound();
+
             return Ok(_mapper.Map<OfferDetailsDto>(result));
         }
 
@@ -70,25 +87,24 @@ namespace musingo_backend.Controllers
         public async Task<ActionResult<OfferDetailsDto>> Update([FromBody] OfferUpdateDto offerUpdateDto)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            var offer = await _offerRepository.GetOfferById(offerUpdateDto.Id);
-            if (offer is null) return NotFound();
-            if (offer.Owner?.Id != userId) return Forbid();
-            if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
+
+            var request = new UpdateOfferCommand()
             {
-                return Forbid();
-            }
+                UserId = userId,
+                OfferId = offerUpdateDto.Id,
+                Title = offerUpdateDto.Title,
+                Description = offerUpdateDto.Description,
+                Cost = offerUpdateDto.Cost,
+                ImageUrl = offerUpdateDto.ImageUrl,
+                ItemCategory = offerUpdateDto.ItemCategory,
+                OfferStatus = offerUpdateDto.OfferStatus
+            };
 
-            offer.Title = offerUpdateDto.Title;
-            offer.Cost = offerUpdateDto.Cost;
-            offer.ImageUrl = offerUpdateDto.ImageUrl;
-            if (Enum.TryParse<OfferStatus>(offerUpdateDto.OfferStatus, out var status)) offer.OfferStatus = status;
-            else return BadRequest();
-            if (Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
-            else return BadRequest();
+            var result = await _mediator.Send(request);
 
-            offer.Description = offerUpdateDto.Description;
+            if (result is null)
+                return NotFound();
 
-            var result = await _offerRepository.UpdateOffer(offer);
             return Ok(result);
         }
 

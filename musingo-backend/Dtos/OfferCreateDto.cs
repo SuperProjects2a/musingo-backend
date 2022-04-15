@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
+using musingo_backend.Models;
 
 namespace musingo_backend.Dtos
 {
@@ -11,6 +12,7 @@ namespace musingo_backend.Dtos
         public string Description { get; set; }
         [Range(0d, 1000000d)]
         public double Cost { get; set; }
+        [EnumDataType(typeof(ItemCategory))]
         public string ItemCategory { get; set; }
     }
 }
