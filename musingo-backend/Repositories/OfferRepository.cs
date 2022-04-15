@@ -13,7 +13,7 @@ namespace musingo_backend.Repositories
         public Task<Offer?> UpdateOffer(Offer offer);
         public Task<ICollection<Offer>> GetUserOffers(int userId);
 
-        public Task<ICollection<Offer>> GetOfferByFilter(OfferFilterDto filter);
+        public IQueryable<Offer> GetAllActiveOffers();
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -47,40 +47,9 @@ namespace musingo_backend.Repositories
             return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
         }
 
-        public async Task<ICollection<Offer>> GetOfferByFilter(OfferFilterDto filter)
+        public IQueryable<Offer> GetAllActiveOffers()
         {
-            var query = GetAll().Include(x=>x.Owner)
-                .Where(x=>x.OfferStatus == OfferStatus.Active);
-
-            if (!string.IsNullOrWhiteSpace(filter.Search))
-                query = query.Where(x => x.Title.Contains(filter.Search));
-
-            if (!string.IsNullOrWhiteSpace(filter.Category))
-                query = query.Where(x => x.ItemCategory == Enum.Parse<ItemCategory>(filter.Category));
-
-            if (filter.PriceFrom is not null)
-                query = query.Where(x => x.Cost >= filter.PriceFrom);
-
-            if (filter.PriceTo is not null)
-                query = query.Where(x => x.Cost <= filter.PriceTo);
-
-            switch (filter.Sorting)
-            {
-                case nameof(Sorting.Latest):
-                    query = query.OrderByDescending(x => x.CreateTime);
-                    break;
-                case nameof(Sorting.Oldest):
-                    query = query.OrderBy(x => x.CreateTime);
-                    break;
-                case nameof(Sorting.Ascending):
-                    query = query.OrderBy(x => x.Cost);
-                    break;
-                case nameof(Sorting.Descending):
-                    query = query.OrderBy(x => x.Cost);
-                    break;
-            }
-            
-            return await query.ToListAsync();
+            return  GetAll().Include(x => x.Owner).Where(x => x.OfferStatus == OfferStatus.Active);
         }
     }
 }
