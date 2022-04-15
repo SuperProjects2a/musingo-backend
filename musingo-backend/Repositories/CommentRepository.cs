@@ -10,7 +10,7 @@ public interface ICommentRepository
     public Task<UserComment> GetCommentById(int id);
     public Task<UserComment> AddComment(UserComment userComment);
     public Task<UserComment> UpdateComment(UserComment userComment);
-    public Task<UserComment> RemoveCommentById(UserComment userComment);
+    public Task<UserComment> RemoveComment(UserComment userComment);
     public Task<UserComment> IsCommented(int transactionId,int userId);
 
     public Task<ICollection<UserComment>> GetUserComments(int userId);
@@ -67,7 +67,7 @@ public class CommentRepository:Repository<UserComment>, ICommentRepository
         return result;
     }
 
-    public async Task<UserComment> RemoveCommentById(UserComment userComment)
+    public async Task<UserComment> RemoveComment(UserComment userComment)
     {
         var result = await RemoveAsync(userComment);
         return result;

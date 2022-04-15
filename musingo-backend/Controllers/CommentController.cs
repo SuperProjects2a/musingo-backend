@@ -90,14 +90,18 @@ namespace musingo_backend.Controllers
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            var commentToRemove = await _commentRepository.GetCommentById(id);
 
-            if (commentToRemove is null) { return NotFound(); }
+            var request = new RemoveCommentCommand()
+            {
+                CommentId = id,
+                UserId = userId
+            };
 
-            if (commentToRemove.User.Id != userId) { return Forbid(); }
+            var result = await _mediator.Send(request);
 
-            var result = await _commentRepository.RemoveCommentById(commentToRemove);
-            if (result is null) return NotFound();
+            if (result is null)
+                return NotFound();
+
             return _mapper.Map<UserCommentDto>(result);
         }
 
