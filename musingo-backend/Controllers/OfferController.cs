@@ -1,9 +1,11 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Authentication;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
+using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
@@ -15,20 +17,31 @@ namespace musingo_backend.Controllers
         private IMapper _mapper;
         private IOfferRepository _offerRepository;
         private IUserRepository _userRepository;
+        private IMediator _mediator;
         private IJwtAuth _jwtAuth;
 
-        public OfferController(IMapper mapper, IOfferRepository offerRepository, IJwtAuth jwt, IUserRepository userRepository)
+        public OfferController(IMapper mapper, IOfferRepository offerRepository, IJwtAuth jwt, IUserRepository userRepository, IMediator mediator)
         {
             _mapper = mapper;
             _offerRepository = offerRepository;
             _jwtAuth = jwt;
             _userRepository = userRepository;
+            _mediator = mediator;
         }
         [HttpGet]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
-            var offers = await _offerRepository.GetOfferByFilter(filterDto);
-            return Ok(_mapper.Map<ICollection<OfferDetailsDto>>(offers));
+            var request = new GetOffersByFilterQuery
+            {
+                Search = filterDto.Search,
+                Category = filterDto.Category,
+                PriceFrom = filterDto.PriceFrom,
+                PriceTo = filterDto.PriceTo,
+                Sorting = filterDto.Sorting
+            };
+
+            var result = await _mediator.Send(request);
+            return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result));
         }
 
         [HttpGet("{id}")]
@@ -71,7 +84,7 @@ namespace musingo_backend.Controllers
             offer.ImageUrl = offerUpdateDto.ImageUrl;
             if (Enum.TryParse<OfferStatus>(offerUpdateDto.OfferStatus, out var status)) offer.OfferStatus = status;
             else return BadRequest();
-            if(Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
+            if (Enum.TryParse<ItemCategory>(offerUpdateDto.ItemCategory, out var category)) offer.ItemCategory = category;
             else return BadRequest();
 
             offer.Description = offerUpdateDto.Description;
@@ -80,6 +93,6 @@ namespace musingo_backend.Controllers
             return Ok(result);
         }
 
-       
+
     }
 }
