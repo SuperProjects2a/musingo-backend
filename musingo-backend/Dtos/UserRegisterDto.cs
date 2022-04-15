@@ -5,7 +5,6 @@ namespace musingo_backend.Dtos;
 
 public class UserRegisterDto
 {
-
     // dane osobowe - wymagane
     [Required(ErrorMessage = "This value is required.")]
     [RegularExpression(@"^[a-zA-Z¹êó³¿Ÿæñœ¥ÊÓ¯ÆÑ£Œ]{3,24}")]
@@ -37,20 +36,5 @@ public class UserRegisterDto
     [Required(ErrorMessage = "This value is required.")]
     [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]
     public string Password { get; set; }
-
-    //public string City { get; set; } // wybieramy z listy
-
-    //[RegularExpression(@"^[a-zA-Z¹êó³¿Ÿæñœ¥ÊÓ¯ÆÑ£Œ]{3,24}")]
-    //public string Street { get; set; }
-
-    //[RegularExpression(@"^[0-9]*$")]
-    //public string HouseNumber { get; set; }
-
-    //[RegularExpression(@"^[0-9]*$")]
-    //public string PostCode { get; set; }
-
-    // dane osobowe - niewymagane
-    // public DateTime? Birth { get; set; } // wybieramy w kalendarzu na stronie czy cos
-    // public string? Gender { get; set; } // wybieramy z listy
 
 }
