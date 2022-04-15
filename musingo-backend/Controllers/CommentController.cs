@@ -30,7 +30,6 @@ namespace musingo_backend.Controllers
             _userRepository = userRepository;
             _mediator = mediator;
         }
-        [AllowAnonymous]
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {
@@ -53,6 +52,7 @@ namespace musingo_backend.Controllers
         public async Task<ActionResult<UserCommentCreateDto>> AddComment(UserCommentCreateDto userCommentData)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+
             var request = new AddCommentCommand()
             {
                 CommentText = userCommentData.CommentText,
@@ -60,6 +60,7 @@ namespace musingo_backend.Controllers
                 TransactionId = userCommentData.TransactionId,
                 UserId = userId
             };
+
             var result = await _mediator.Send(request);
             if (result is null)
                 return NotFound();
@@ -69,19 +70,20 @@ namespace musingo_backend.Controllers
         [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
-            var userComment = await _commentRepository.GetCommentById(userCommentData.Id);
-
-            if (userComment is null) { return NotFound(); }
-
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            if (userComment.User.Id != userId) { return Forbid(); }
+            var request = new UpdateCommentCommand()
+            {
+                CommentId = userCommentData.Id,
+                CommentText = userCommentData.CommentText,
+                Rating = userCommentData.Rating,
+                UserId = userId
+            };
+            var result = await _mediator.Send(request);
 
-            if (userCommentData.Rating is not null) userComment.Rating = (double)userCommentData.Rating;
+            if (result is null)
+                return NotFound();
 
-            if (!String.IsNullOrEmpty(userCommentData.CommentText)) userComment.CommentText = userCommentData.CommentText;
-
-            var result = await _commentRepository.UpdateComment(userComment);
             return _mapper.Map<UserCommentUpdateDto>(result);
         }
         [HttpDelete]

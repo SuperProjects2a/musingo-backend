@@ -41,9 +41,9 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
         {
             Transaction = transaction,
             CommentText = request.CommentText,
-            Rating = request.Rating
+            Rating = request.Rating,
+            User = await _userRepository.GetUserById(request.UserId)
         };
-        comment.User = await _userRepository.GetUserById(request.UserId);
 
         if (comment.User is null)
             return null;
