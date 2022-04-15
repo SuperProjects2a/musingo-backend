@@ -18,22 +18,36 @@ namespace musingo_backend.Controllers
     public class ProfileController : ControllerBase
     {
         private readonly IMapper _mapper;
-        private IOfferRepository _offerRepository;
-        private IUserRepository _userRepository;
-        private ICommentRepository _commentRepository;
-        private IJwtAuth _jwtAuth;
         private readonly IMediator _mediator;
+        private IUserRepository _userRepository;
 
-        public ProfileController(IMapper mapper, IOfferRepository offerRepository, IUserRepository userRepository, ICommentRepository commentRepository, IJwtAuth jwtAuth, IMediator mediator)
+        public ProfileController(IMapper mapper, IMediator mediator, IUserRepository userRepository)
         {
             _mapper = mapper;
-            _offerRepository = offerRepository;
-            _userRepository = userRepository;
-            _commentRepository = commentRepository;
-            _jwtAuth = jwtAuth;
             _mediator = mediator;
+            _userRepository = userRepository;
         }
 
+        [HttpGet]
+        public async Task<ActionResult<UserDetailsDto>> GetUserInfo()
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+
+            var request = new GetUserByIdQuery()
+            {
+                UserId = userId
+            };
+
+            var result = await _mediator.Send(request);
+
+            if (result is null)
+                return NotFound();
+
+            var user = _mapper.Map<UserDetailsDto>(result);
+            user.AvgRating = await _userRepository.GetAvg(userId);
+
+            return user;
+        }
 
         [HttpGet("Offers")]
         public async Task<ActionResult<ICollection<OfferDto>>> GetUserOffers()
@@ -52,6 +66,7 @@ namespace musingo_backend.Controllers
             return Ok(_mapper.Map<ICollection<OfferDto>>(result));
             
         }
+
         [HttpGet("Comments")]
         public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserComments()
         {
@@ -86,26 +101,7 @@ namespace musingo_backend.Controllers
 
             return Ok(_mapper.Map<ICollection<UserCommentDto>>(result));
         }
-        [HttpGet("Profile")]
-        public async Task<ActionResult<UserDetailsDto>> GetUserInfo()
-        {
-            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-
-            var request = new GetUserByIdQuery()
-            {
-                UserId = userId
-            };
-
-            var result = await _mediator.Send(request);
-
-            if (result is null)
-                return NotFound();
-
-            var user = _mapper.Map<UserDetailsDto>(result);
-            user.AvgRating = await _userRepository.GetAvg(userId);
-
-            return user;
-        }
+        
         [HttpPut]
         public async Task<ActionResult<UserDetailsDto>> UpdateUser(UserUpdateDto userUpdateDto)
         {

@@ -45,6 +45,7 @@ namespace musingo_backend.Controllers
             {
                 Id = id
             };
+
             var result = await _mediator.Send(request);
 
             if (result is null)
