@@ -26,14 +26,7 @@ namespace musingo_backend.Controllers
         [HttpGet]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
-            var request = new GetOffersByFilterQuery
-            {
-                Search = filterDto.Search,
-                Category = filterDto.Category,
-                PriceFrom = filterDto.PriceFrom,
-                PriceTo = filterDto.PriceTo,
-                Sorting = filterDto.Sorting
-            };
+            var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
             var result = await _mediator.Send(request);
             return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result));
         }
@@ -60,14 +53,8 @@ namespace musingo_backend.Controllers
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            var request = new AddOfferCommand()
-            {
-                UserId = userId,
-                Title = offerCreateDto.Title,
-                Cost = offerCreateDto.Cost,
-                Description = offerCreateDto.Description,
-                ItemCategory = offerCreateDto.ItemCategory
-            };
+            var request = _mapper.Map<AddOfferCommand>(offerCreateDto);
+            request.UserId = userId;
 
             var result = await _mediator.Send(request);
 
@@ -83,17 +70,8 @@ namespace musingo_backend.Controllers
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            var request = new UpdateOfferCommand()
-            {
-                UserId = userId,
-                OfferId = offerUpdateDto.Id,
-                Title = offerUpdateDto.Title,
-                Description = offerUpdateDto.Description,
-                Cost = offerUpdateDto.Cost,
-                ImageUrl = offerUpdateDto.ImageUrl,
-                ItemCategory = offerUpdateDto.ItemCategory,
-                OfferStatus = offerUpdateDto.OfferStatus
-            };
+            var request = _mapper.Map<UpdateOfferCommand>(offerUpdateDto);
+            request.UserId= userId;
 
             var result = await _mediator.Send(request);
 

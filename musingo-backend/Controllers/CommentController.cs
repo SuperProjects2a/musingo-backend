@@ -40,7 +40,7 @@ namespace musingo_backend.Controllers
                 return NotFound();
             }
             return Ok(_mapper.Map<UserCommentDto>(result));
-            
+
         }
 
         [HttpPost]
@@ -48,13 +48,8 @@ namespace musingo_backend.Controllers
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            var request = new AddCommentCommand()
-            {
-                CommentText = userCommentData.CommentText,
-                Rating = userCommentData.Rating,
-                TransactionId = userCommentData.TransactionId,
-                UserId = userId
-            };
+            var request = _mapper.Map<AddCommentCommand>(userCommentData);
+            request.UserId = userId;
 
             var result = await _mediator.Send(request);
             if (result is null)
@@ -67,13 +62,8 @@ namespace musingo_backend.Controllers
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            var request = new UpdateCommentCommand()
-            {
-                CommentId = userCommentData.Id,
-                CommentText = userCommentData.CommentText,
-                Rating = userCommentData.Rating,
-                UserId = userId
-            };
+            var request = _mapper.Map<UpdateCommentCommand>(userCommentData);
+            request.UserId = userId;
             var result = await _mediator.Send(request);
 
             if (result is null)

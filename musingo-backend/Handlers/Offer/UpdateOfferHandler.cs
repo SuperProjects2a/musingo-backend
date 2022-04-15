@@ -22,9 +22,8 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, Offer?>
         if (offer.Owner?.Id != request.UserId) return null;
 
         if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
-        {
             return null;
-        }
+
 
         offer.Title = request.Title;
         offer.Cost = request.Cost;

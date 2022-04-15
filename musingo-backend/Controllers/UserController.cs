@@ -73,15 +73,7 @@ public class UserController : ControllerBase
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<UserDto>> RegisterUser(UserRegisterDto userRegisterData)
     {
-        var request = new RegisterUserCommand()
-        {
-            Name = userRegisterData.Name,
-            Surname = userRegisterData.Surname,
-            Email = userRegisterData.Email,
-            PhoneNumber = userRegisterData.PhoneNumber,
-            Password = userRegisterData.Password,
-            AcceptedTOS = userRegisterData.AcceptedTOS
-        };
+        var request = _mapper.Map<RegisterUserCommand>(userRegisterData);
 
         var result = await _mediator.Send(request);
         if (result is null)

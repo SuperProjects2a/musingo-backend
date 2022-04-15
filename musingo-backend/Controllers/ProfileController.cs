@@ -107,23 +107,8 @@ namespace musingo_backend.Controllers
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            var request = new UpdateUserCommand()
-            {
-                UserId = userId,
-                Email = userUpdateDto.Email,
-                NewPassword = userUpdateDto.NewPassword,
-                OldPassword = userUpdateDto.OldPassword,
-                Name = userUpdateDto.Name,
-                Surname = userUpdateDto.Surname,
-                Birth = userUpdateDto.Birth,
-                City = userUpdateDto.City,
-                PostCode = userUpdateDto.PostCode,
-                Street = userUpdateDto.Street,
-                HouseNumber = userUpdateDto.HouseNumber,
-                Gender = userUpdateDto.Gender,
-                ImageUrl = userUpdateDto.ImageUrl,
-                PhoneNumber = userUpdateDto.PhoneNumber
-            };
+            var request = _mapper.Map<UpdateUserCommand>(userUpdateDto);
+            request.UserId = userId;
 
             var result = await _mediator.Send(request);
 

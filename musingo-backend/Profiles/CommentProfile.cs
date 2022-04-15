@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
 
@@ -12,7 +13,9 @@ namespace musingo_backend.Profiles
             CreateMap<UserComment, UserCommentUpdateDto>();
             CreateMap<UserCommentUpdateDto, UserComment>();
             CreateMap<UserCommentCreateDto, UserComment>();
-            CreateMap< UserComment, UserCommentCreateDto>();
+            CreateMap<UserComment, UserCommentCreateDto>();
+            CreateMap<UserCommentCreateDto, AddCommentCommand>().ReverseMap();
+            CreateMap<UserCommentUpdateDto, UpdateCommentCommand>().ReverseMap();
         }
     }
 }
