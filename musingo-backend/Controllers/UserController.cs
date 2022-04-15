@@ -1,10 +1,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Authentication;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
+using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers;
@@ -17,24 +19,33 @@ public class UserController : ControllerBase
     private IMapper _mapper;
     private IUserRepository _userRepository;
     private IJwtAuth _jwtAuth;
+    private readonly IMediator _mediator;
 
-    public UserController(IMapper mapper, IUserRepository userRepository,IJwtAuth jwtAuth)
+    public UserController(IMapper mapper, IUserRepository userRepository, IJwtAuth jwtAuth, IMediator mediator)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _jwtAuth = jwtAuth;
+        _mediator = mediator;
     }
     [HttpGet("{id}", Name = "GetUserById")]
-    public async Task<ActionResult<UserDto>> GetPlatformById(int id)
+    public async Task<ActionResult<UserDto>> GetUserById(int id)
     {
-        var platformItem = await _userRepository.GetUserById(id);
-        if (platformItem is not null)
+        var request = new GetUserByIdQuery()
         {
-            var userDto = _mapper.Map<UserDto>(platformItem);
-            userDto.AvgRating =await _userRepository.GetAvg(id);
-            return Ok(userDto);
-        }
-        return NotFound();
+            UserId = id
+        };
+
+        var result = await _mediator.Send(request);
+
+        if (result is null)
+            return NotFound();
+
+        var user = _mapper.Map<UserDto>(result);
+        user.AvgRating = await _userRepository.GetAvg(id);
+
+        return user;
+
     }
     [AllowAnonymous]
     [HttpPost("login", Name = "LoginUser")]

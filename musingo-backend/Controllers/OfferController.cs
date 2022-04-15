@@ -16,17 +16,11 @@ namespace musingo_backend.Controllers
     public class OfferController : ControllerBase
     {
         private IMapper _mapper;
-        private IOfferRepository _offerRepository;
-        private IUserRepository _userRepository;
         private IMediator _mediator;
-        private IJwtAuth _jwtAuth;
 
-        public OfferController(IMapper mapper, IOfferRepository offerRepository, IJwtAuth jwt, IUserRepository userRepository, IMediator mediator)
+        public OfferController(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
-            _offerRepository = offerRepository;
-            _jwtAuth = jwt;
-            _userRepository = userRepository;
             _mediator = mediator;
         }
         [HttpGet]
