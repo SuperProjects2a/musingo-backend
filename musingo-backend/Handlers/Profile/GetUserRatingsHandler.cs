@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetUserRatingsHandler: IRequestHandler<GetUserRatingsQuery, HandlerResultCollection<UserComment>>
+public class GetUserRatingsHandler: IRequestHandler<GetUserRatingsQuery, HandlerResult<ICollection<UserComment>>>
 {
     private readonly IUserCommentRepository _userCommentRepository;
 
@@ -14,9 +14,9 @@ public class GetUserRatingsHandler: IRequestHandler<GetUserRatingsQuery, Handler
         _userCommentRepository = userCommentRepository;
     }
 
-    public async Task<HandlerResultCollection<UserComment>> Handle(GetUserRatingsQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<ICollection<UserComment>>> Handle(GetUserRatingsQuery request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResultCollection<UserComment>();
+        var result = new HandlerResult<ICollection<UserComment>>();
         result.Body = await _userCommentRepository.GetUserRatings(request.UserId);
         return result;
     }

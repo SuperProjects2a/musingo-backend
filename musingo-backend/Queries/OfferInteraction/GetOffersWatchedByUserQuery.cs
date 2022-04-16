@@ -3,7 +3,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Queries;
 
-public class GetOffersWatchedByUserQuery : IRequest<HandlerResultCollection<Offer>>
+public class GetOffersWatchedByUserQuery : IRequest<HandlerResult<ICollection<Offer>>>
 {
     public int UserId { get; set; }
 }
