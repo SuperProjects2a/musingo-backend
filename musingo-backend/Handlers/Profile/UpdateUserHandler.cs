@@ -1,11 +1,12 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Commands;
 using musingo_backend.Models;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, User?>
+public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, HandlerResult<User>>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,11 +15,16 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, User?>
         _userRepository = userRepository;
     }
 
-    public async Task<User?> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<User>> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserById(request.UserId);
-        
-        if (user is null) return null;
+        var result = new HandlerResult<User>();
+
+        if (user is null)
+        {
+            result.Status = 404;
+            return result;
+        }
 
         if (!String.IsNullOrEmpty(request.Email))
         {
@@ -78,6 +84,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, User?>
         }
 
         await _userRepository.UpdateUser(user);
-        return user;
+        result.Body = user;
+        return  result;
     }
 }

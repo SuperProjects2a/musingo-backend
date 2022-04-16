@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
+public class AddCommentHandler : IRequestHandler<AddCommentCommand,HandlerResult<UserComment>>
 {
     private readonly IUserRepository _userRepository;
     private readonly ITransactionRepository _transactionRepository;
@@ -18,23 +18,33 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
         _userCommentRepository = userCommentRepository;
     }
 
-    public async Task<UserComment?> Handle(AddCommentCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<UserComment>> Handle(AddCommentCommand request, CancellationToken cancellationToken)
     {
+        var result = new HandlerResult<UserComment>();
+        
         var transaction = await _transactionRepository.GetTransaction(request.TransactionId);
-        if (transaction is null) return null;
+        
+        if (transaction is null)
+        {
+            result.Status = 404;
+            return result;
+        }
         if (transaction.Status != TransactionStatus.Finished)
         {
-            return null;
+            result.Status = 1;
+            return result;
         }
         if (request.UserId != transaction.Buyer.Id && request.UserId != transaction.Seller.Id)
         {
-            return null;
+            result.Status = 2;
+            return result;
         }
 
         var isCommented = await _userCommentRepository.IsCommented(transaction.Id, request.UserId);
         if (isCommented is not null)
         {
-            return null;
+            result.Status = 3;
+            return result;
         }
 
         var comment = new UserComment
@@ -46,10 +56,14 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,UserComment?>
         };
 
         if (comment.User is null)
-            return null;
+        {
+            result.Status = 404;
+            return result;
+        }
 
         await _userCommentRepository.AddComment(comment);
 
-        return comment;
+        result.Body = comment;
+        return result;
     }
 }

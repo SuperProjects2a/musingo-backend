@@ -3,7 +3,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Commands;
 
-public class UpdateUserCommand: IRequest<User?>
+public class UpdateUserCommand: IRequest<HandlerResult<User>>
 {
     public int UserId { get; set; }
     public string? Email { get; set; }

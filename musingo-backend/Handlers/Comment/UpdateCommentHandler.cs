@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class UpdateCommentHandler: IRequestHandler<UpdateCommentCommand,UserComment?>
+public class UpdateCommentHandler : IRequestHandler<UpdateCommentCommand, HandlerResult<UserComment>>
 {
     private readonly IUserRepository _userRepository;
     private readonly IUserCommentRepository _userCommentRepository;
@@ -16,20 +16,31 @@ public class UpdateCommentHandler: IRequestHandler<UpdateCommentCommand,UserComm
         _userCommentRepository = userCommentRepository;
     }
 
-    public async Task<UserComment?> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<UserComment>> Handle(UpdateCommentCommand request, CancellationToken cancellationToken)
     {
+        var result = new HandlerResult<UserComment>();
+
         var userComment = await _userCommentRepository.GetCommentById(request.CommentId);
 
-        if (userComment is null) return null;
+        if (userComment is null)
+        {
+            result.Status = 404;
+            return result;
+        }
 
-        if (userComment.User.Id != request.UserId) return null;
+        if (userComment.User.Id != request.UserId)
+        {
+            result.Status = 403;
+            return result;
+        }
 
-        if (request.Rating is not null) userComment.Rating = (double) request.Rating;
+        if (request.Rating is not null) userComment.Rating = (double)request.Rating;
 
         if (!String.IsNullOrEmpty(request.CommentText)) userComment.CommentText = request.CommentText;
 
-         await _userCommentRepository.UpdateComment(userComment);
+        await _userCommentRepository.UpdateComment(userComment);
 
-         return userComment;
+        result.Body = userComment;
+        return result;
     }
 }

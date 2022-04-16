@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, Offer?>
+public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, HandlerResult<Offer>>
 {
     private readonly IOfferRepository _offerRepository;
 
@@ -14,30 +14,53 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, Offer?>
         _offerRepository = offerRepository;
     }
 
-    public async Task<Offer?> Handle(UpdateOfferCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<Offer>> Handle(UpdateOfferCommand request, CancellationToken cancellationToken)
     {
-        var offer = await _offerRepository.GetOfferById(request.OfferId);
-        if (offer is null) return null;
+        var result = new HandlerResult<Offer>();
 
-        if (offer.Owner?.Id != request.UserId) return null;
+        var offer = await _offerRepository.GetOfferById(request.OfferId);
+        if (offer is null)
+        {
+            result.Status = 404;
+            return result;
+        }
+
+        if (offer.Owner?.Id != request.UserId)
+        {
+            result.Status = 403;
+            return result;
+        }
 
         if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
-            return null;
+        {
+            result.Status = 403;
+            return result;
+        }
 
 
         offer.Title = request.Title;
         offer.Cost = request.Cost;
         offer.ImageUrl = request.ImageUrl;
         if (Enum.TryParse<OfferStatus>(request.OfferStatus, out var status)) offer.OfferStatus = status;
-        else return null;
+        else 
+        {
+            result.Status = 403;
+            return result;
+        }
         if (Enum.TryParse<ItemCategory>(request.ItemCategory, out var category)) offer.ItemCategory = category;
-        else return null;
+        else
+        {
+            result.Status = 403;
+            return result;
+        };
 
         offer.Description = request.Description;
 
         await _offerRepository.UpdateOffer(offer);
 
-        return offer;
+        result.Body = offer;
+
+        return result;
     }
 
 }

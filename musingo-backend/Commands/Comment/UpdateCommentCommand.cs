@@ -3,7 +3,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Commands;
 
-public class UpdateCommentCommand: IRequest<UserComment?>
+public class UpdateCommentCommand: IRequest<HandlerResult<UserComment>>
 {
     public int CommentId { get; set; }
     public int UserId { get; set; }

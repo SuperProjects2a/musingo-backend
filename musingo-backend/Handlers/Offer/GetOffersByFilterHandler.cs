@@ -7,7 +7,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, ICollection<Offer>?>
+public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, HandlerResultCollection<Offer>>
 {
     private readonly IOfferRepository _offerRepository;
 
@@ -15,8 +15,10 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, 
     {
         _offerRepository = offerRepository;
     }
-    public async Task<ICollection<Offer>?> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResultCollection<Offer>> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
     {
+        var result = new HandlerResultCollection<Offer>();
+
         var offers = _offerRepository.GetAllActiveOffers();
 
         if (!string.IsNullOrWhiteSpace(request.Search))
@@ -39,6 +41,7 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, 
             nameof(Sorting.Descending) => offers.OrderBy(x => x.Cost),
             _ => throw new ArgumentException()
         };
-        return await offers.ToListAsync(cancellationToken: cancellationToken);
+        result.Body = await offers.ToListAsync();
+        return result;
     }
 }

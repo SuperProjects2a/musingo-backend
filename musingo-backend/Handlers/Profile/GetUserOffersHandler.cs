@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetUserOffersHandler: IRequestHandler<GetUserOffersQuery,ICollection<Offer>?>
+public class GetUserOffersHandler: IRequestHandler<GetUserOffersQuery, HandlerResultCollection<Offer>>
 {
     private readonly IOfferRepository _offerRepository;
 
@@ -14,8 +14,10 @@ public class GetUserOffersHandler: IRequestHandler<GetUserOffersQuery,ICollectio
         _offerRepository = offerRepository;
     }
 
-    public async Task<ICollection<Offer>?> Handle(GetUserOffersQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResultCollection<Offer>> Handle(GetUserOffersQuery request, CancellationToken cancellationToken)
     {
-        return await _offerRepository.GetUserOffers(request.UserId);
+        var result = new HandlerResultCollection<Offer>();
+        result.Body = await _offerRepository.GetUserOffers(request.UserId);
+        return result;
     }
 }

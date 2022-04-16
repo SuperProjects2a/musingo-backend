@@ -6,7 +6,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class RegisterUserHandler: IRequestHandler<RegisterUserCommand,User?>
+public class RegisterUserHandler: IRequestHandler<RegisterUserCommand, HandlerResult<User>>
 {
     private readonly IUserRepository _userRepository;
 
@@ -15,8 +15,9 @@ public class RegisterUserHandler: IRequestHandler<RegisterUserCommand,User?>
         _userRepository = userRepository;
     }
 
-    public async Task<User?> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<User>> Handle(RegisterUserCommand request, CancellationToken cancellationToken)
     {
+        var result = new HandlerResult<User>();
         var user = new User()
         {
             Name = request.Name,
@@ -26,6 +27,7 @@ public class RegisterUserHandler: IRequestHandler<RegisterUserCommand,User?>
             Password = request.Password
         };
         await _userRepository.AddUser(user);
-        return user;
+        result.Body = user;
+        return result;
     }
 }

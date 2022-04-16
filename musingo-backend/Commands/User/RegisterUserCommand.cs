@@ -3,7 +3,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Commands;
 
-public class RegisterUserCommand: IRequest<User?>
+public class RegisterUserCommand: IRequest<HandlerResult<User>>
 {
     public string Name { get; set; }
     public string Surname { get; set; }

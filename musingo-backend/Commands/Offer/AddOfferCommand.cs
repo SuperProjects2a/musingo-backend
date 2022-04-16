@@ -3,7 +3,7 @@ using musingo_backend.Models;
 
 namespace musingo_backend.Commands;
 
-public class AddOfferCommand: IRequest<Offer?>
+public class AddOfferCommand: IRequest<HandlerResult<Offer>>
 {
     public int UserId { get; set; }
     public string Title { get; set; }

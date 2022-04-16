@@ -28,7 +28,7 @@ namespace musingo_backend.Controllers
         {
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
             var result = await _mediator.Send(request);
-            return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result));
+            return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result.Body));
         }
 
         [HttpGet("{id}")]
@@ -41,10 +41,13 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 404:
+                    return NotFound();
+            }
 
-            return Ok(_mapper.Map<OfferDetailsDto>(result));
+            return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
         }
 
         [Authorize]
@@ -58,10 +61,13 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 404:
+                    return NotFound();
+            }
 
-            return Ok(_mapper.Map<OfferDetailsDto>(result));
+            return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
         }
 
         [Authorize]
@@ -75,10 +81,15 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 403:
+                    return Forbid();
+                case 404:
+                    return NotFound();
+            }
 
-            return Ok(result);
+            return Ok(result.Body);
         }
 
 

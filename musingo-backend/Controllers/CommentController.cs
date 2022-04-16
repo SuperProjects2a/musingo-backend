@@ -35,11 +35,12 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
+            if (result.Status == 404)
             {
                 return NotFound();
             }
-            return Ok(_mapper.Map<UserCommentDto>(result));
+
+            return Ok(_mapper.Map<UserCommentDto>(result.Body));
 
         }
 
@@ -52,10 +53,22 @@ namespace musingo_backend.Controllers
             request.UserId = userId;
 
             var result = await _mediator.Send(request);
-            if (result is null)
-                return NotFound();
 
-            return _mapper.Map<UserCommentCreateDto>(result);
+            switch (result.Status)
+            {
+                case 404:
+                    return NotFound();
+                case 1:
+                    return Problem("Transaction is not finished");
+                case 2:
+                    return Problem("You are not buyer or seller");
+                case 3:
+                    return Problem("You can comment only once");
+
+                    
+            }
+
+            return _mapper.Map<UserCommentCreateDto>(result.Body);
         }
         [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
@@ -66,10 +79,15 @@ namespace musingo_backend.Controllers
             request.UserId = userId;
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 403:
+                    return Forbid();
+                case 404:
+                    return NotFound();
+            }
 
-            return _mapper.Map<UserCommentUpdateDto>(result);
+            return Ok(_mapper.Map<UserCommentUpdateDto>(result.Body));
         }
         [HttpDelete]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
@@ -84,10 +102,15 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 403:
+                    return Forbid();
+                case 404:
+                    return NotFound();
+            }
 
-            return _mapper.Map<UserCommentDto>(result);
+            return Ok(_mapper.Map<UserCommentDto>(result.Body));
         }
 
     }

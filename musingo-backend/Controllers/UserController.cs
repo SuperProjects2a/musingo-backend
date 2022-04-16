@@ -39,13 +39,16 @@ public class UserController : ControllerBase
 
         var result = await _mediator.Send(request);
 
-        if (result is null)
-            return NotFound();
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
 
-        var user = _mapper.Map<UserDto>(result);
+        var user = _mapper.Map<UserDto>(result.Body);
         user.AvgRating = await _userRepository.GetAvg(id);
 
-        return user;
+        return Ok(user);
 
     }
     [AllowAnonymous]
@@ -60,10 +63,13 @@ public class UserController : ControllerBase
 
         var result = await _mediator.Send(request);
 
-        if (result is null)
-            return NotFound();
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
 
-        var token = _jwtAuth.Authentication(result);
+        var token = _jwtAuth.Authentication(result.Body);
         HttpContext.Response.Headers.Add("AuthToken", token);
 
         return Ok(_mapper.Map<UserDto>(result));
@@ -76,9 +82,13 @@ public class UserController : ControllerBase
         var request = _mapper.Map<RegisterUserCommand>(userRegisterData);
 
         var result = await _mediator.Send(request);
-        if (result is null)
-            return NotFound();
 
-        return _mapper.Map<UserDto>(result);
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
+
+        return Ok(_mapper.Map<UserDto>(result.Body));
     }
 }

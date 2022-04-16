@@ -37,16 +37,18 @@ namespace musingo_backend.Controllers
             {
                 UserId = userId
             };
-
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                return NotFound();
+            switch (result.Status)
+            {
+                case 404:
+                    return NotFound();
+            }
 
-            var user = _mapper.Map<UserDetailsDto>(result);
+            var user = _mapper.Map<UserDetailsDto>(result.Body);
             user.AvgRating = await _userRepository.GetAvg(userId);
 
-            return user;
+            return Ok(user);
         }
 
         [HttpGet("Offers")]
@@ -59,11 +61,8 @@ namespace musingo_backend.Controllers
             };
 
             var result = await _mediator.Send(request);
-            if(result is null)
-                return NotFound();
 
-
-            return Ok(_mapper.Map<ICollection<OfferDto>>(result));
+            return Ok(_mapper.Map<ICollection<OfferDto>>(result.Body));
             
         }
 
@@ -79,9 +78,7 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if(result is null)
-                return NotFound();
-            return Ok(_mapper.Map<ICollection<UserCommentDto>>(result));
+            return Ok(_mapper.Map<ICollection<UserCommentDto>>(result.Body));
             
         }
         [HttpGet("Ratings")]
@@ -96,10 +93,7 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is  null)
-                return NotFound();
-
-            return Ok(_mapper.Map<ICollection<UserCommentDto>>(result));
+            return Ok(_mapper.Map<ICollection<UserCommentDto>>(result.Body));
         }
         
         [HttpPut]
@@ -112,10 +106,14 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result is null)
-                NotFound();
+            switch (result.Status)
+            {
+                case 404:
+                    return NotFound();
+            }
 
-            return _mapper.Map<UserDetailsDto>(result);
+
+            return Ok(_mapper.Map<UserDetailsDto>(result.Body));
 
         }
 

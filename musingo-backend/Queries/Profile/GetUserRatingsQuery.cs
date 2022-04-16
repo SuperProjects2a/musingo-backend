@@ -4,7 +4,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Queries;
 
-public class GetUserRatingsQuery: IRequest<ICollection<UserComment>?>
+public class GetUserRatingsQuery: IRequest<HandlerResultCollection<UserComment>>
 {
     public int UserId { get; set; }
 }

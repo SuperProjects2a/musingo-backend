@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery,User?>
+public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery, HandlerResult<User>>
 {
     private readonly IUserRepository _userRepository;
 
@@ -14,8 +14,17 @@ public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery,User?>
         _userRepository = userRepository;
     }
 
-    public async Task<User?> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<User>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        return await _userRepository.GetUserById(request.UserId);
+        var result = new HandlerResult<User>();
+        var user = await _userRepository.GetUserById(request.UserId);
+        if (user is null)
+        {
+            result.Status = 404;
+            return result;
+        }
+
+        result.Body = user;
+        return result;
     }
 }

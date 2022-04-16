@@ -5,7 +5,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetCommentByIdHandler: IRequestHandler<GetCommentByIdQuery,UserComment?>
+public class GetCommentByIdHandler: IRequestHandler<GetCommentByIdQuery, HandlerResult<UserComment>>
 {
     private readonly IUserCommentRepository _userCommentRepository;
 
@@ -14,9 +14,17 @@ public class GetCommentByIdHandler: IRequestHandler<GetCommentByIdQuery,UserComm
         _userCommentRepository = userCommentRepository;
     }
 
-    public async Task<UserComment?> Handle(GetCommentByIdQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<UserComment>> Handle(GetCommentByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = await _userCommentRepository.GetCommentById(request.CommentId);
+        var result = new HandlerResult<UserComment>();
+        var comment = await _userCommentRepository.GetCommentById(request.CommentId);
+
+        if (comment is null)
+        {
+            result.Status = 404;
+            return result;
+        }
+        result.Body=comment;
         return result;
     }
 }
