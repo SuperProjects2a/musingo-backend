@@ -41,7 +41,7 @@ public class AddCommentHandler : IRequestHandler<AddCommentCommand,HandlerResult
         }
 
         var isCommented = await _userCommentRepository.IsCommented(transaction.Id, request.UserId);
-        if (isCommented is not null)
+        if (isCommented)
         {
             result.Status = 3;
             return result;

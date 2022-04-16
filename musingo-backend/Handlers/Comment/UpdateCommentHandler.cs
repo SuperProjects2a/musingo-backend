@@ -20,7 +20,7 @@ public class UpdateCommentHandler : IRequestHandler<UpdateCommentCommand, Handle
     {
         var result = new HandlerResult<UserComment>();
 
-        var userComment = await _userCommentRepository.GetCommentById(request.CommentId);
+        var userComment = await _userCommentRepository.GetCommentById(request.Id);
 
         if (userComment is null)
         {

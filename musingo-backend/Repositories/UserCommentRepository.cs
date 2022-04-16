@@ -11,14 +11,14 @@ public interface IUserCommentRepository
     public Task<UserComment> AddComment(UserComment userComment);
     public Task<UserComment> UpdateComment(UserComment userComment);
     public Task<UserComment> RemoveComment(UserComment userComment);
-    public Task<UserComment> IsCommented(int transactionId,int userId);
+    public Task<bool> IsCommented(int transactionId,int userId);
 
     public Task<ICollection<UserComment>> GetUserComments(int userId);
     public Task<ICollection<UserComment>> GetUserRatings(int userId);
 }
-public class UserUserCommentRepository:Repository<UserComment>, IUserCommentRepository
+public class UserCommentRepository:Repository<UserComment>, IUserCommentRepository
 {
-    public UserUserCommentRepository(RepositoryContext context) : base(context) { }
+    public UserCommentRepository(RepositoryContext context) : base(context) { }
     public async Task<UserComment> GetCommentById(int id)
     {
        var result = await GetAll()
@@ -34,10 +34,12 @@ public class UserUserCommentRepository:Repository<UserComment>, IUserCommentRepo
         return result;
     }
 
-    public async Task<UserComment> IsCommented(int transactionId,int userId)
+    public async Task<bool> IsCommented(int transactionId,int userId)
     {
         var result = await repositoryContext.UserComments.FirstOrDefaultAsync(x => x.Transaction.Id == transactionId && x.User.Id == userId);
-        return result;
+        if (result is null)
+            return false;
+        return true;
     }
 
     public async Task<ICollection<UserComment>> GetUserComments(int userId)

@@ -18,7 +18,7 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, HandlerRes
     {
         var result = new HandlerResult<Offer>();
 
-        var offer = await _offerRepository.GetOfferById(request.OfferId);
+        var offer = await _offerRepository.GetOfferById(request.Id);
         if (offer is null)
         {
             result.Status = 404;

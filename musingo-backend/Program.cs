@@ -21,7 +21,7 @@ builder.Services.AddDbContext<RepositoryContext>(options =>
 
 builder.Services.AddTransient(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddTransient<IUserRepository, UserRepository>();
-builder.Services.AddTransient<IUserCommentRepository, UserUserCommentRepository>();
+builder.Services.AddTransient<IUserCommentRepository, UserCommentRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<IOfferRepository, OfferRepository>();
 
