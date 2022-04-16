@@ -1,9 +1,12 @@
 ﻿using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
+using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
@@ -13,88 +16,101 @@ namespace musingo_backend.Controllers
     [ApiController]
     public class CommentController : ControllerBase
     {
-        private readonly ICommentRepository _commentRepository;
-        private readonly ITransactionRepository _transactionRepository;
-        private readonly IUserRepository _userRepository;
         private readonly IMapper _mapper;
+        private readonly IMediator _mediator;
 
-        public CommentController(ICommentRepository commentRepository, ITransactionRepository transactionRepository, IUserRepository userRepository, IMapper mapper)
+        public CommentController(IMapper mapper, IMediator mediator)
         {
-            _commentRepository = commentRepository;
             _mapper = mapper;
-            _transactionRepository = transactionRepository;
-            _userRepository = userRepository;
+            _mediator = mediator;
         }
 
         [HttpGet("{id}", Name = "GetCommentById")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {
-            var result = await _commentRepository.GetCommentById(id);
-            if (result is not null)
+            var request = new GetCommentByIdQuery
             {
-                return Ok(_mapper.Map<UserCommentDto>(result));
+                CommentId = id
+            };
+
+            var result = await _mediator.Send(request);
+
+            if (result.Status == 404)
+            {
+                return NotFound();
             }
 
-            return NotFound();
+            return Ok(_mapper.Map<UserCommentDto>(result.Body));
+
         }
 
         [HttpPost]
         public async Task<ActionResult<UserCommentCreateDto>> AddComment(UserCommentCreateDto userCommentData)
         {
-            var transaction = await _transactionRepository.GetTransaction(userCommentData.TransactionId);
-            if (transaction is null) return NotFound();
-            if (transaction.Status != TransactionStatus.Finished)
-            {
-                return Problem("Transaction not finished. You can't comment yet");
-            }
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            if (userId != transaction.Buyer.Id && userId != transaction.Seller.Id)
+
+            var request = _mapper.Map<AddCommentCommand>(userCommentData);
+            request.UserId = userId;
+
+            var result = await _mediator.Send(request);
+
+            switch (result.Status)
             {
-                return Forbid();
+                case 404:
+                    return NotFound();
+                case 1:
+                    return Problem("Transaction is not finished");
+                case 2:
+                    return Problem("You are not buyer or seller");
+                case 3:
+                    return Problem("You can comment only once");
+
+                    
             }
 
-            var isCommented = await _commentRepository.IsCommented(transaction.Id, userId);
-            if (isCommented is not null)
-            {
-                return Problem("You can only comment once");
-            }
-            var comment = _mapper.Map<UserComment>(userCommentData);
-            comment.User = await _userRepository.GetUserById(userId);
-            comment.Transaction = transaction;
-            var result = await _commentRepository.AddComment(comment);
-            return _mapper.Map<UserCommentCreateDto>(result);
+            return _mapper.Map<UserCommentCreateDto>(result.Body);
         }
         [HttpPut]
         public async Task<ActionResult<UserCommentUpdateDto>> UpdateComment(UserCommentUpdateDto userCommentData)
         {
-            var userComment = await _commentRepository.GetCommentById(userCommentData.Id);
-
-            if (userComment is null) { return NotFound(); }
-
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
-            if (userComment.User.Id != userId) { return Forbid(); }
+            var request = _mapper.Map<UpdateCommentCommand>(userCommentData);
+            request.UserId = userId;
+            var result = await _mediator.Send(request);
 
-            if (userCommentData.Rating is not null) userComment.Rating = (double)userCommentData.Rating;
+            switch (result.Status)
+            {
+                case 403:
+                    return Forbid();
+                case 404:
+                    return NotFound();
+            }
 
-            if (!String.IsNullOrEmpty(userCommentData.CommentText)) userComment.CommentText = userCommentData.CommentText;
-
-            var result = await _commentRepository.UpdateComment(userComment);
-            return _mapper.Map<UserCommentUpdateDto>(result);
+            return Ok(_mapper.Map<UserCommentUpdateDto>(result.Body));
         }
         [HttpDelete]
         public async Task<ActionResult<UserCommentDto>> RemoveCommentById(int id)
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
-            var commentToRemove = await _commentRepository.GetCommentById(id);
 
-            if (commentToRemove is null) { return NotFound(); }
+            var request = new RemoveCommentCommand()
+            {
+                CommentId = id,
+                UserId = userId
+            };
 
-            if (commentToRemove.User.Id != userId) { return Forbid(); }
+            var result = await _mediator.Send(request);
 
-            var result = await _commentRepository.RemoveCommentById(commentToRemove);
-            if (result is null) return NotFound();
-            return _mapper.Map<UserCommentDto>(result);
+            switch (result.Status)
+            {
+                case 403:
+                    return Forbid();
+                case 404:
+                    return NotFound();
+            }
+
+            return Ok(_mapper.Map<UserCommentDto>(result.Body));
         }
 
     }

@@ -32,8 +32,14 @@ public class OfferInteractionController : ControllerBase
             UserId = userId
         };
         var result = await _mediator.Send(request);
-        if (result is null) return NotFound();
-        return _mapper.Map<OfferDetailsDto>(result);
+        switch (result.Status)
+        {
+            case 403:
+                return Forbid();
+            case 404:
+                return NotFound();
+        }
+        return _mapper.Map<OfferDetailsDto>(result.Body);
 
     }
 
@@ -49,8 +55,12 @@ public class OfferInteractionController : ControllerBase
         };
 
         var result = await _mediator.Send(request);
-        if (result is null) return NotFound();
-        return Ok(_mapper.Map<OfferDetailsDto>(result));
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
+        return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
 
     }
 
@@ -65,7 +75,7 @@ public class OfferInteractionController : ControllerBase
         };
 
         var result = await _mediator.Send(request);
-        return Ok(_mapper.Map<IEnumerable<OfferDto>>(result));
+        return Ok(_mapper.Map<IEnumerable<OfferDto>>(result.Body));
     }
 
 }

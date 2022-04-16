@@ -1,10 +1,13 @@
 using System.IdentityModel.Tokens.Jwt;
 using AutoMapper;
+using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Authentication;
+using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
+using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers;
@@ -14,50 +17,78 @@ namespace musingo_backend.Controllers;
 [Route("api/[controller]")]
 public class UserController : ControllerBase
 {
-    private IMapper _mapper;
-    private IUserRepository _userRepository;
-    private IJwtAuth _jwtAuth;
+    private readonly IMapper _mapper;
+    private readonly IUserRepository _userRepository;
+    private readonly IJwtAuth _jwtAuth;
+    private readonly IMediator _mediator;
 
-    public UserController(IMapper mapper, IUserRepository userRepository,IJwtAuth jwtAuth)
+    public UserController(IMapper mapper, IUserRepository userRepository, IJwtAuth jwtAuth, IMediator mediator)
     {
         _mapper = mapper;
         _userRepository = userRepository;
         _jwtAuth = jwtAuth;
+        _mediator = mediator;
     }
     [HttpGet("{id}", Name = "GetUserById")]
-    public async Task<ActionResult<UserDto>> GetPlatformById(int id)
+    public async Task<ActionResult<UserDto>> GetUserById(int id)
     {
-        var platformItem = await _userRepository.GetUserById(id);
-        if (platformItem is not null)
+        var request = new GetUserByIdQuery()
         {
-            var userDto = _mapper.Map<UserDto>(platformItem);
-            userDto.AvgRating =await _userRepository.GetAvg(id);
-            return Ok(userDto);
+            UserId = id
+        };
+
+        var result = await _mediator.Send(request);
+
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
         }
-        return NotFound();
+
+        var user = _mapper.Map<UserDto>(result.Body);
+        user.AvgRating = await _userRepository.GetAvg(id);
+
+        return Ok(user);
+
     }
     [AllowAnonymous]
     [HttpPost("login", Name = "LoginUser")]
     public async Task<ActionResult<UserDto>> LoginUser(UserLoginDto loginData)
     {
-        if (loginData.Email is null || loginData.Password is null) return BadRequest();
-        var user = await _userRepository.LoginUser(loginData.Email, loginData.Password);
-        if (user is null) return NotFound();
-        var token = _jwtAuth.Authentication(user);
+        var request = new LoginUserCommand()
+        {
+            Email = loginData.Email,
+            Password = loginData.Password
+        };
+
+        var result = await _mediator.Send(request);
+
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
+
+        var token = _jwtAuth.Authentication(result.Body);
         HttpContext.Response.Headers.Add("AuthToken", token);
 
-        var userDto = _mapper.Map<UserDto>(user);
-        userDto.AvgRating = await _userRepository.GetAvg(user.Id);
-        return Ok(userDto);
+        return Ok(_mapper.Map<UserDto>(result.Body));
 
     }
     [AllowAnonymous]
     [HttpPost("register", Name = "RegisterUser")]
     public async Task<ActionResult<UserDto>> RegisterUser(UserRegisterDto userRegisterData)
     {
-            var user = _mapper.Map<User>(userRegisterData);
-            var result = await _userRepository.AddUser(user);
-            if (result is null) return ValidationProblem();
-            return _mapper.Map<UserDto>(user);
+        var request = _mapper.Map<RegisterUserCommand>(userRegisterData);
+
+        var result = await _mediator.Send(request);
+
+        switch (result.Status)
+        {
+            case 404:
+                return NotFound();
+        }
+
+        return Ok(_mapper.Map<UserDto>(result.Body));
     }
 }

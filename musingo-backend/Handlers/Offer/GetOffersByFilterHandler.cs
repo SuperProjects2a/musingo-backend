@@ -7,7 +7,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery,ICollection<Offer>?>
+public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, HandlerResult<ICollection<Offer>>>
 {
     private readonly IOfferRepository _offerRepository;
 
@@ -15,14 +15,14 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery,I
     {
         _offerRepository = offerRepository;
     }
-    public async Task<ICollection<Offer>?> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<ICollection<Offer>>> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
     {
-        var offers =  _offerRepository.GetAllActiveOffers();
+        var result = new HandlerResult<ICollection<Offer>>();
+
+        var offers = _offerRepository.GetAllActiveOffers();
 
         if (!string.IsNullOrWhiteSpace(request.Search))
-        {
             offers = offers.Where(x => x.Title.Contains(request.Search));
-        }
 
         if (!string.IsNullOrWhiteSpace(request.Category))
             offers = offers.Where(x => x.ItemCategory == Enum.Parse<ItemCategory>(request.Category));
@@ -41,6 +41,7 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery,I
             nameof(Sorting.Descending) => offers.OrderBy(x => x.Cost),
             _ => throw new ArgumentException()
         };
-        return await offers.ToListAsync(cancellationToken: cancellationToken);
+        result.Body = await offers.ToListAsync();
+        return result;
     }
 }

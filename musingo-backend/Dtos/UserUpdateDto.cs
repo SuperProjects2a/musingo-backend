@@ -9,12 +9,12 @@ public class UserUpdateDto
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
     [RegularExpression(@"^[a-zA-Z0-9\.\-_]{1,}@[a-zA-Z0-9\-_]{1,}\.[a-zA-Z\.]{1,}$")]
-    public string Email { get; set; }
+    public string? Email { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
     [RegularExpression(@"^[a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}")]
-    public string Name { get; set; }
+    public string? Name { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
@@ -23,12 +23,12 @@ public class UserUpdateDto
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
-    public string OldPassword { get; set; }
+    public string? OldPassword { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
     [RegularExpression(@"^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9])(?=.*?[#?!@$%^&*-]).{8,}$")]
-    public string NewPassword { get; set; }
+    public string? NewPassword { get; set; }
 
     [Required(AllowEmptyStrings = true)]
     [DefaultValue("")]
