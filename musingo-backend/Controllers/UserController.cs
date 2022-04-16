@@ -72,7 +72,7 @@ public class UserController : ControllerBase
         var token = _jwtAuth.Authentication(result.Body);
         HttpContext.Response.Headers.Add("AuthToken", token);
 
-        return Ok(_mapper.Map<UserDto>(result));
+        return Ok(_mapper.Map<UserDto>(result.Body));
 
     }
     [AllowAnonymous]
