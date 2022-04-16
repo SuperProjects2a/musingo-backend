@@ -30,7 +30,6 @@
     </ItemGroup>
 
     <ItemGroup>
-      <Folder Include="Commands\Profile\" />
       <Folder Include="Migrations" />
       <Folder Include="CustomValidation\" />
     </ItemGroup>

@@ -17,7 +17,7 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, User?>
     public async Task<User?> Handle(UpdateUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserById(request.UserId);
-
+        
         if (user is null) return null;
 
         if (!String.IsNullOrEmpty(request.Email))
