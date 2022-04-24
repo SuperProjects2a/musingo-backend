@@ -9,6 +9,7 @@ namespace musingo_backend.Repositories
     public interface ITransactionRepository
     {
         public Task<Transaction> GetTransaction(int id);
+        public Task<Transaction> AddTransaction(Transaction transaction);
     }
     public class TransactionRepository:Repository<Transaction>,ITransactionRepository
     {
@@ -19,6 +20,12 @@ namespace musingo_backend.Repositories
                 .Include(x => x.Seller)
                 .Include(x => x.Buyer)
                 .FirstOrDefaultAsync(x => x.Id == id);
+            return result;
+        }
+
+        public async Task<Transaction> AddTransaction(Transaction transaction)
+        {
+            var result = await AddAsync(transaction);
             return result;
         }
     }
