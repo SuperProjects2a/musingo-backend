@@ -33,7 +33,6 @@ public class PurchaseHandler : IRequestHandler<PurchaseCommand, HandlerResult<Tr
             Offer = offer,
             Seller = offer.Owner,
             Buyer = user,
-            LastUpdateTime = DateTime.Now,
             Status = TransactionStatus.Finished,
             Cost = offer.Cost
         };
