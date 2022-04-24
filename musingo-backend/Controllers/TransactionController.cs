@@ -21,7 +21,7 @@ public class TransactionController : ControllerBase
     }
 
     [Authorize]
-    [HttpPost]
+    [HttpPost("buy")]
     public async Task<ActionResult<TransactionDetailsDto>> BuyWithoutNegotiation(int offerId)
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -42,4 +42,26 @@ public class TransactionController : ControllerBase
         };
 
     }
+
+    [Authorize]
+    [HttpPost("open")]
+    public async Task<ActionResult<TransactionDetailsDto>> OpenTransaction(int offerId, string? message)
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new OpenTransactionCommand()
+        {
+            UserId = userId,
+            OfferId = offerId,
+            Message = message ?? ""
+        };
+
+        var result = await _mediator.Send(request);
+        return result.Status switch
+        {
+            404 => NotFound(),
+            2 => Problem("Cannot open transaction for this item"),
+            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
+            _ => Forbid()
+        };
+    } 
 }
