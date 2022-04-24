@@ -1,9 +1,11 @@
+using System.Diagnostics;
 using AutoMapper;
 using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Commands;
 using musingo_backend.Dtos;
+using musingo_backend.Models;
 using musingo_backend.Queries;
 
 namespace musingo_backend.Controllers;
@@ -75,5 +77,33 @@ public class TransactionController : ControllerBase
         var result = await _mediator.Send(request);
 
         return Ok(_mapper.Map<IEnumerable<TransactionDetailsDto>>(result.Body));
+    }
+
+    [Authorize]
+    [HttpPut]
+    public async Task<ActionResult<TransactionDetailsDto>> UpdateTransaction(
+        [FromBody] TransactionUpdateDto transactionUpdateDto)
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var parseSuccess = Enum.TryParse<TransactionStatus>(transactionUpdateDto.TransactionStatus, out var status);
+        if (!parseSuccess) return BadRequest();
+
+        var request = new UpdateTransactionCommand()
+        {
+            TransactionId = transactionUpdateDto.TransactionId,
+            Cost = transactionUpdateDto.Cost,
+            TransactionStatus = status,
+            UserId = userId
+        };
+        var result = await _mediator.Send(request);
+
+        return result.Status switch
+        {
+            200 => Ok(result.Body),
+            404 => NotFound(),
+            403 => Forbid(),
+            _ => Forbid()
+        };
+
     }
 }
