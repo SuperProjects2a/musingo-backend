@@ -77,5 +77,50 @@ public class OfferInteractionController : ControllerBase
         var result = await _mediator.Send(request);
         return Ok(_mapper.Map<IEnumerable<OfferDto>>(result.Body));
     }
+    
+    [Authorize]
+    [HttpPost("{offerId}/openTransaction")]
+    public async Task<ActionResult<TransactionDetailsDto>> OpenTransaction([FromRoute]int offerId, [FromQuery] string? message)
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new OpenTransactionCommand()
+        {
+            UserId = userId,
+            OfferId = offerId,
+            Message = message ?? ""
+        };
+
+        var result = await _mediator.Send(request);
+        return result.Status switch
+        {
+            404 => NotFound(),
+            2 => Problem("Cannot open transaction for this item"),
+            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
+            _ => Forbid()
+        };
+    }
+    
+    [Authorize]
+    [HttpPost("{offerId}/buy")]
+    public async Task<ActionResult<TransactionDetailsDto>> BuyWithoutNegotiation(int offerId)
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new PurchaseCommand()
+        {
+            UserId = userId,
+            OfferId = offerId
+        };
+
+        var result = await _mediator.Send(request);
+        return result.Status switch
+        {
+            404 => NotFound(),
+            1 => Problem("Not enough wallet balance"),
+            2 => Problem("Cannot buy this item"),
+            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
+            _ => Forbid()
+        };
+
+    }
 
 }
