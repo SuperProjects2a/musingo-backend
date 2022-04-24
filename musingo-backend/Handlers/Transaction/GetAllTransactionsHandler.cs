@@ -25,6 +25,7 @@ public class GetAllTransactionsHandler : IRequestHandler<GetAllTransactionsQuery
             .Include(x => x.Buyer)
             .Include(x => x.Seller)
             .Where(x => x.Buyer.Id == user.Id || x.Seller.Id == user.Id)
+            .Include(x => x.Offer)
             .ToListAsync(cancellationToken);
 
         return new HandlerResult<IEnumerable<Transaction>>() {Body = transactions, Status = 200};

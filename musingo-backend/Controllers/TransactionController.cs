@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using musingo_backend.Commands;
 using musingo_backend.Dtos;
+using musingo_backend.Queries;
 
 namespace musingo_backend.Controllers;
 
@@ -63,5 +64,16 @@ public class TransactionController : ControllerBase
             200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
             _ => Forbid()
         };
-    } 
+    }
+
+    [Authorize]
+    [HttpGet]
+    public async Task<ActionResult<IEnumerable<TransactionDetailsDto>>> GetTransactions()
+    {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+        var request = new GetAllTransactionsQuery() {UserId = userId};
+        var result = await _mediator.Send(request);
+
+        return Ok(_mapper.Map<IEnumerable<TransactionDetailsDto>>(result.Body));
+    }
 }
