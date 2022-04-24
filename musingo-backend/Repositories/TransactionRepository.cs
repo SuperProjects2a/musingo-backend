@@ -10,6 +10,8 @@ namespace musingo_backend.Repositories
     {
         public Task<Transaction> GetTransaction(int id);
         public Task<Transaction> AddTransaction(Transaction transaction);
+        public Task<Transaction> UpdateTransaction(Transaction transaction);
+        public IQueryable<Transaction> GetAllTransactions();
     }
     public class TransactionRepository:Repository<Transaction>,ITransactionRepository
     {
@@ -33,6 +35,11 @@ namespace musingo_backend.Repositories
         {
             var result = await UpdateAsync(transaction);
             return result;
+        }
+
+        public IQueryable<Transaction> GetAllTransactions()
+        {
+            return GetAll();
         }
     }
 }
