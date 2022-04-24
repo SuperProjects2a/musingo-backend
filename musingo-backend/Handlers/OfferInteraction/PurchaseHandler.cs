@@ -27,7 +27,6 @@ public class PurchaseHandler : IRequestHandler<PurchaseCommand, HandlerResult<Tr
         if (offer.Cost > user.WalletBalance) return new HandlerResult<Transaction>() {Status = 1};
         if (offer.OfferStatus != OfferStatus.Active) return new HandlerResult<Transaction>() {Status = 2};
 
-        user.WalletBalance -= offer.Cost;
         var transaction = new Transaction()
         {
             Offer = offer,

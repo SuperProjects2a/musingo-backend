@@ -37,7 +37,7 @@ public class TransactionController : ControllerBase
             404 => NotFound(),
             1 => Problem("Not enough wallet balance"),
             2 => Problem("Cannot buy this item"),
-            200 => Ok(result.Body),
+            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
             _ => Forbid()
         };
 
