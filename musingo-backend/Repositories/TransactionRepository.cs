@@ -8,7 +8,7 @@ namespace musingo_backend.Repositories
 {
     public interface ITransactionRepository
     {
-        public Task<Transaction> GetTransaction(int id);
+        public Task<Transaction?> GetTransaction(int id);
         public Task<Transaction> AddTransaction(Transaction transaction);
         public Task<Transaction> UpdateTransaction(Transaction transaction);
         public IQueryable<Transaction> GetAllTransactions();
@@ -16,7 +16,7 @@ namespace musingo_backend.Repositories
     public class TransactionRepository:Repository<Transaction>,ITransactionRepository
     {
         public TransactionRepository(RepositoryContext context) : base(context) { }
-        public async  Task<Transaction> GetTransaction(int id)
+        public async  Task<Transaction?> GetTransaction(int id)
         {
             var result = await repositoryContext.Transactions
                 .Include(x => x.Seller)
