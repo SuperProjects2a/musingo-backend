@@ -28,5 +28,11 @@ namespace musingo_backend.Repositories
             var result = await AddAsync(transaction);
             return result;
         }
+
+        public async Task<Transaction> UpdateTransaction(Transaction transaction)
+        {
+            var result = await UpdateAsync(transaction);
+            return result;
+        }
     }
 }
