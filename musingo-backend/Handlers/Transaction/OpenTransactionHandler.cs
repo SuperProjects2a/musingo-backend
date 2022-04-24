@@ -1,4 +1,5 @@
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 using musingo_backend.Commands;
 using musingo_backend.Models;
 using musingo_backend.Repositories;
@@ -26,6 +27,14 @@ public class OpenTransactionHandler : IRequestHandler<OpenTransactionCommand, Ha
         if (offer is null) return new HandlerResult<Transaction>() {Status = 404};
         if (offer.OfferStatus != OfferStatus.Active) return new HandlerResult<Transaction>() {Status = 2};
         if (offer.Owner.Id == user.Id) return new HandlerResult<Transaction>() {Status = 403};
+
+        var existingTransaction = await _transactionRepository.GetAllTransactions()
+            .Include(x => x.Offer)
+            .Where(x => offer.Id == request.OfferId)
+            .Where(x => x.Buyer.Id == request.UserId)
+            .FirstOrDefaultAsync(cancellationToken);
+
+        if (existingTransaction is not null) return new HandlerResult<Transaction>() {Status = 403};
 
         var transaction = new Transaction()
         {
