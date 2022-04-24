@@ -5,26 +5,25 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class PurchaseHandler : IRequestHandler<PurchaseCommand, HandlerResult<Transaction>>
+public class OpenTransactionHandler : IRequestHandler<OpenTransactionCommand, HandlerResult<Transaction>>
 {
-    private IOfferRepository _offerRepository;
-    private IUserRepository _userRepository;
     private ITransactionRepository _transactionRepository;
+    private IUserRepository _userRepository;
+    private IOfferRepository _offerRepository;
 
-    public PurchaseHandler(IOfferRepository offerRepository, IUserRepository userRepository, ITransactionRepository transactionRepository)
+    public OpenTransactionHandler(ITransactionRepository transactionRepository, IUserRepository userRepository, IOfferRepository offerRepository)
     {
-        _offerRepository = offerRepository;
-        _userRepository = userRepository;
         _transactionRepository = transactionRepository;
+        _userRepository = userRepository;
+        _offerRepository = offerRepository;
     }
 
-    public async Task<HandlerResult<Transaction>> Handle(PurchaseCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<Transaction>> Handle(OpenTransactionCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserById(request.UserId);
         var offer = await _offerRepository.GetOfferById(request.OfferId);
-        
+
         if (offer is null) return new HandlerResult<Transaction>() {Status = 404};
-        if (offer.Cost > user.WalletBalance) return new HandlerResult<Transaction>() {Status = 1};
         if (offer.OfferStatus != OfferStatus.Active) return new HandlerResult<Transaction>() {Status = 2};
         if (offer.Owner.Id == user.Id) return new HandlerResult<Transaction>() {Status = 403};
 
@@ -33,15 +32,9 @@ public class PurchaseHandler : IRequestHandler<PurchaseCommand, HandlerResult<Tr
             Offer = offer,
             Seller = offer.Owner,
             Buyer = user,
-            Status = TransactionStatus.Finished,
+            Status = TransactionStatus.Opened,
             Cost = offer.Cost
         };
-
-        user.WalletBalance -= offer.Cost;
-        await _userRepository.UpdateUser(user);
-
-        offer.OfferStatus = OfferStatus.Sold;
-        await _offerRepository.UpdateOffer(offer);
         
         var createdTransaction = await _transactionRepository.AddTransaction(transaction);
         return new HandlerResult<Transaction>() {Body = createdTransaction, Status = 200};
