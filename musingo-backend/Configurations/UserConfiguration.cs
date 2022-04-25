@@ -54,5 +54,8 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
                         .OnDelete(DeleteBehavior.NoAction)
                 );
 
+        builder.Property(x => x.WalletBalance)
+            .HasColumnName("wallet_balance");
+
     }
 }

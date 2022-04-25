@@ -29,12 +29,13 @@ public class UserController : ControllerBase
         _jwtAuth = jwtAuth;
         _mediator = mediator;
     }
-    [HttpGet("{id}", Name = "GetUserById")]
-    public async Task<ActionResult<UserDto>> GetUserById(int id)
+    [HttpGet(Name = "GetUserById")]
+    public async Task<ActionResult<UserDetailsDto>> GetUserById()
     {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
         var request = new GetUserByIdQuery()
         {
-            UserId = id
+            UserId = userId
         };
 
         var result = await _mediator.Send(request);
@@ -45,8 +46,8 @@ public class UserController : ControllerBase
                 return NotFound();
         }
 
-        var user = _mapper.Map<UserDto>(result.Body);
-        user.AvgRating = await _userRepository.GetAvg(id);
+        var user = _mapper.Map<UserDetailsDto>(result.Body);
+        user.AvgRating = await _userRepository.GetAvg(userId);
 
         return Ok(user);
 

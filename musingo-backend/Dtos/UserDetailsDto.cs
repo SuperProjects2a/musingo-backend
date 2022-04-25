@@ -8,6 +8,7 @@ namespace musingo_backend.Dtos
         public string Email { get; set; }
         public string? ImageUrl { get; set; }
         public double AvgRating { get; set; }
+        public double WalletBalance { get; set; }
 
         // dane do wysylki
         public string? City { get; set; }

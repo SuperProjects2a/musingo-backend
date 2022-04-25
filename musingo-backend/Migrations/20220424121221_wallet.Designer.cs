@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using musingo_backend.Data;
 
@@ -11,9 +12,10 @@ using musingo_backend.Data;
 namespace musingo_backend.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220424121221_wallet")]
+    partial class wallet
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -82,10 +84,6 @@ namespace musingo_backend.Migrations
                         .HasColumnName("id");
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<double>("Cost")
-                        .HasColumnType("float")
-                        .HasColumnName("cost");
 
                     b.Property<byte[]>("LastUpdateTime")
                         .IsRequired()
@@ -174,8 +172,7 @@ namespace musingo_backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<double>("WalletBalance")
-                        .HasColumnType("float")
-                        .HasColumnName("wallet_balance");
+                        .HasColumnType("float");
 
                     b.HasKey("Id");
 

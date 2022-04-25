@@ -40,5 +40,8 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
             .HasColumnType("timestamp")
             .ValueGeneratedOnAddOrUpdate();
 
+        builder.Property(x => x.Cost)
+            .HasColumnName("cost");
+
     }
 }

@@ -15,4 +15,5 @@ public class Transaction
     public User? Buyer { get; set; }
     public DateTime LastUpdateTime { get; set; }
     public TransactionStatus Status { get; set; }
+    public double Cost { get; set; }
 }

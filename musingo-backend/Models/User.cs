@@ -35,4 +35,5 @@ public class User
     public ICollection<Offer> WatchedOffers { get; set; }
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
     public Role Role { get; set; }
+    public double WalletBalance { get; set; }
 }
