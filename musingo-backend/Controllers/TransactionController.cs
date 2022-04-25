@@ -54,6 +54,7 @@ public class TransactionController : ControllerBase
 
         return result.Status switch
         {
+            3 => Problem("Cannot manage finished transaction"),
             200 => Ok(result.Body),
             404 => NotFound(),
             403 => Forbid(),

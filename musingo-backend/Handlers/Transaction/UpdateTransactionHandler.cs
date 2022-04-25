@@ -22,6 +22,10 @@ public class UpdateTransactionHandler : IRequestHandler<UpdateTransactionCommand
 
         if (transaction is null) return new HandlerResult<Transaction>() {Status = 404};
         if (transaction.Seller.Id != request.UserId) return new HandlerResult<Transaction>() {Status = 403};
+        if (transaction.Status == TransactionStatus.Finished || transaction.Status == TransactionStatus.Declined)
+        {
+            return new HandlerResult<Transaction>() { Status = 3 };
+        }
 
         transaction.Cost = request.Cost;
         transaction.Status = request.TransactionStatus;
