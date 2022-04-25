@@ -30,7 +30,8 @@ public class OpenTransactionHandler : IRequestHandler<OpenTransactionCommand, Ha
 
         var existingTransaction = await _transactionRepository.GetAllTransactions()
             .Include(x => x.Offer)
-            .Where(x => offer.Id == request.OfferId)
+            .Include(x => x.Buyer)
+            .Where(x => x.Offer.Id == request.OfferId)
             .Where(x => x.Buyer.Id == request.UserId)
             .FirstOrDefaultAsync(cancellationToken);
 
