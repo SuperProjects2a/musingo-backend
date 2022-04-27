@@ -18,17 +18,15 @@ namespace musingo_backend.Controllers;
 public class UserController : ControllerBase
 {
     private readonly IMapper _mapper;
-    private readonly IUserRepository _userRepository;
     private readonly IJwtAuth _jwtAuth;
     private readonly IMediator _mediator;
-
-    public UserController(IMapper mapper, IUserRepository userRepository, IJwtAuth jwtAuth, IMediator mediator)
+    public UserController(IMapper mapper, IJwtAuth jwtAuth, IMediator mediator)
     {
         _mapper = mapper;
-        _userRepository = userRepository;
         _jwtAuth = jwtAuth;
         _mediator = mediator;
     }
+
     [HttpGet(Name = "GetUserById")]
     public async Task<ActionResult<UserDetailsDto>> GetUserById()
     {
@@ -46,10 +44,8 @@ public class UserController : ControllerBase
                 return NotFound();
         }
 
-        var user = _mapper.Map<UserDetailsDto>(result.Body);
-        user.AvgRating = await _userRepository.GetAvg(userId);
 
-        return Ok(user);
+        return Ok(result.Body);
 
     }
     [AllowAnonymous]
