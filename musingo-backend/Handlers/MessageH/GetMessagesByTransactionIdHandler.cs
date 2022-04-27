@@ -19,7 +19,7 @@ public class GetMessagesByTransactionIdHandler : IRequestHandler<GetMessagesByTr
     public async Task<HandlerResult<ICollection<Message>>> Handle(GetMessagesByTransactionIdQuery requst,
         CancellationToken cancellationToken)
     {
-        var messages = await _messageRepository.GetMessagesByTransactionId(requst.TransactionId);
+        var messages = await _messageRepository.GetMessagesByTransaction(requst.TransactionId);
 
         if (messages.Count == 0) return new HandlerResult<ICollection<Message>> { Status = 404 };
 
@@ -28,6 +28,11 @@ public class GetMessagesByTransactionIdHandler : IRequestHandler<GetMessagesByTr
         if (transaction.Buyer.Id != requst.UserId && transaction.Seller.Id != requst.UserId)
             return new HandlerResult<ICollection<Message>> { Status = 403 };
 
+        var unreadMessages = messages
+            .Where(x => x.Sender.Id != requst.UserId && x.IsRead == false)
+            .ToList();
+        unreadMessages.ForEach(r => r.IsRead = true);
+        await _messageRepository.UpdateMessageRange(unreadMessages);
 
         return new HandlerResult<ICollection<Message>> { Body = messages, Status = 200 };
     }
