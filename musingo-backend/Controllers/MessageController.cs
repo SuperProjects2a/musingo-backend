@@ -20,13 +20,11 @@ namespace musingo_backend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        private readonly IMessageRepository _messageRepository;
 
         public MessageController(IMapper mapper, IMediator mediator, IMessageRepository messageRepository)
         {
             _mapper = mapper;
             _mediator = mediator;
-            _messageRepository = messageRepository;
         }
 
         [HttpGet(template:"{id}")]
@@ -81,19 +79,12 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            if (result.Status == 404)
-                return NotFound();
-
-            var messages = _mapper.Map<ICollection<MessageChatDto>>(result.Body);
-
-            foreach (var message in messages)
+            return result.Status switch
             {
-                message.UnReadMessagesCount =
-                    await _messageRepository.UnreadMessageCount(message.TransactionId, userId);
-            }
-
-
-            return Ok(messages);
+                200 => Ok(result.Body),
+                404 => NotFound(),
+                _ => Forbid()
+            };
         }
 
     }
