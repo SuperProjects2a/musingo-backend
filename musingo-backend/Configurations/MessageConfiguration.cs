@@ -34,6 +34,7 @@ public class MessageConfiguration : IEntityTypeConfiguration<Message>
 
         builder.Property(x => x.IsRead)
             .HasColumnName("is_read")
-            .HasColumnType("bit");
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
     }
 }
