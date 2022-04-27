@@ -11,6 +11,7 @@ public class RepositoryContext : DbContext
     public virtual DbSet<Transaction> Transactions { get; set; }
     public virtual DbSet<User> Users { get; set; }
     public virtual DbSet<UserComment> UserComments { get; set; }
+    public virtual DbSet<Message> Messages { get; set; }
 
     public RepositoryContext(DbContextOptions<RepositoryContext> options) : base(options)
     {
@@ -23,6 +24,7 @@ public class RepositoryContext : DbContext
         modelBuilder.ApplyConfiguration<Transaction>(new TransactionConfiguration());
         modelBuilder.ApplyConfiguration<User>(new UserConfiguration());
         modelBuilder.ApplyConfiguration<UserComment>(new UserCommentConfiguration());
+        modelBuilder.ApplyConfiguration<Message>(new MessageConfiguration());
         
     }
     

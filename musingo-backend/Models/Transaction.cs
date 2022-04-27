@@ -16,5 +16,4 @@ public class Transaction
     public DateTime LastUpdateTime { get; set; }
     public TransactionStatus Status { get; set; }
     public double Cost { get; set; }
-    public ICollection<Message> Messages { get; set; }
 }
