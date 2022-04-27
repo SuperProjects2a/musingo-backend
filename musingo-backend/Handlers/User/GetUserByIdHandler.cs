@@ -1,22 +1,26 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
+using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Queries;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery, HandlerResult<User>>
+public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery, HandlerResult<UserDetailsDto>>
 {
     private readonly IUserRepository _userRepository;
+    private readonly IMapper _mapper;
 
-    public GetUserByIdHandler(IUserRepository userRepository)
+    public GetUserByIdHandler(IUserRepository userRepository, IMapper mapper)
     {
         _userRepository = userRepository;
+        _mapper = mapper;
     }
 
-    public async Task<HandlerResult<User>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<UserDetailsDto>> Handle(GetUserByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<User>();
+        var result = new HandlerResult<UserDetailsDto>();
         var user = await _userRepository.GetUserById(request.UserId);
         if (user is null)
         {
@@ -24,7 +28,9 @@ public class GetUserByIdHandler: IRequestHandler<GetUserByIdQuery, HandlerResult
             return result;
         }
 
-        result.Body = user;
+        var userDto = _mapper.Map<UserDetailsDto>(user);
+        userDto.AvgRating = await _userRepository.GetAvg(user.Id);
+        result.Body = userDto;
         return result;
     }
 }

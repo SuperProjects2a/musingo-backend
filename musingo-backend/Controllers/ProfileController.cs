@@ -19,13 +19,11 @@ namespace musingo_backend.Controllers
     {
         private readonly IMapper _mapper;
         private readonly IMediator _mediator;
-        private IUserRepository _userRepository;
 
-        public ProfileController(IMapper mapper, IMediator mediator, IUserRepository userRepository)
+        public ProfileController(IMapper mapper, IMediator mediator)
         {
             _mapper = mapper;
             _mediator = mediator;
-            _userRepository = userRepository;
         }
 
         [HttpGet]
@@ -45,10 +43,7 @@ namespace musingo_backend.Controllers
                     return NotFound();
             }
 
-            var user = _mapper.Map<UserDetailsDto>(result.Body);
-            user.AvgRating = await _userRepository.GetAvg(userId);
-
-            return Ok(user);
+            return Ok(result.Body);
         }
 
         [HttpGet("Offers")]
