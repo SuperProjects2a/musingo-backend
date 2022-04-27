@@ -1,4 +1,5 @@
-﻿using musingo_backend.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using musingo_backend.Models;
 
 namespace musingo_backend.Dtos;
 

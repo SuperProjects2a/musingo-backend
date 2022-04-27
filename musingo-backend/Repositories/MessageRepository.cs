@@ -9,6 +9,8 @@ public interface IMessageRepository
 {
     public Task<ICollection<Message>> GetMessagesByTransactionId(int transactionId);
 
+    public Task<Message> SendMessage(Message message);
+
 
 }
 
@@ -32,4 +34,8 @@ public class MessageRepository:Repository<Message>,IMessageRepository
         return messages;
     }
 
+    public async Task<Message> SendMessage(Message message)
+    {
+        return await AddAsync(message);
+    }
 }

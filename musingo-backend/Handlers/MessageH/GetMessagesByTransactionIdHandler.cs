@@ -1,5 +1,5 @@
 ﻿using MediatR;
-using musingo_backend.Queries.Message;
+using musingo_backend.Queries.MessageQ;
 using musingo_backend.Repositories;
 using musingo_backend.Models;
 
