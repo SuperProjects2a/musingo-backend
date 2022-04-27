@@ -11,12 +11,14 @@ public class OpenTransactionHandler : IRequestHandler<OpenTransactionCommand, Ha
     private ITransactionRepository _transactionRepository;
     private IUserRepository _userRepository;
     private IOfferRepository _offerRepository;
+    private IMessageRepository _messageRepository;
 
-    public OpenTransactionHandler(ITransactionRepository transactionRepository, IUserRepository userRepository, IOfferRepository offerRepository)
+    public OpenTransactionHandler(ITransactionRepository transactionRepository, IUserRepository userRepository, IOfferRepository offerRepository, IMessageRepository messageRepository)
     {
         _transactionRepository = transactionRepository;
         _userRepository = userRepository;
         _offerRepository = offerRepository;
+        _messageRepository = messageRepository;
     }
 
     public async Task<HandlerResult<Transaction>> Handle(OpenTransactionCommand request, CancellationToken cancellationToken)
@@ -47,6 +49,15 @@ public class OpenTransactionHandler : IRequestHandler<OpenTransactionCommand, Ha
         };
         
         var createdTransaction = await _transactionRepository.AddTransaction(transaction);
+
+        var message = new Message()
+        {
+            Transaction = transaction,
+            Sender = user,
+            Text = request.Message
+        };
+        await _messageRepository.SendMessage(message);
+
         return new HandlerResult<Transaction>() {Body = createdTransaction, Status = 200};
     }
 }
