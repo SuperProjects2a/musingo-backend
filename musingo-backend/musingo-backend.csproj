@@ -30,8 +30,10 @@
     </ItemGroup>
 
     <ItemGroup>
+      <Folder Include="Handlers\MessageH\" />
       <Folder Include="Migrations" />
       <Folder Include="CustomValidation\" />
+      <Folder Include="Queries\Message\" />
     </ItemGroup>
 
     <ItemGroup>
