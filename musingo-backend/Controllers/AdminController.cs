@@ -64,15 +64,18 @@ namespace musingo_backend.Controllers
         [HttpPost("UserBanUnban/{userId}")]
         public async Task<ActionResult<UserDetailsDto>> UserBanUnban(int userId)
         {
+            var adminId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
             var request = new BanUnbanUserCommand()
             {
-                UserId = userId
+                UserId = userId,
+                AdminId = adminId
             };
 
             var result = await _mediator.Send(request);
 
             return result.Status switch
             {
+                1 => Problem("You can't ban yourself"),
                 200 => Ok(_mapper.Map<UserDetailsDto>(result.Body)),
                 404 => NotFound(),
                 _ => Forbid()

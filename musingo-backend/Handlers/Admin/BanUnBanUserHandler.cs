@@ -16,6 +16,8 @@ public class BanUnbanUserHandler : IRequestHandler<BanUnbanUserCommand,HandlerRe
 
     public async Task<HandlerResult<User>> Handle(BanUnbanUserCommand request, CancellationToken cancellationToken)
     {
+        if (request.UserId == request.AdminId) return new HandlerResult<User>() { Status = 1 };
+
         var user = await _userRepository.GetUserById(request.UserId);
 
         if (user is null) return new HandlerResult<User> { Status = 404 };

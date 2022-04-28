@@ -2,9 +2,9 @@
 
 public enum Reason
 {
-    Reason1,
-    Reason3,
-    Reason5
+    Insults,
+    ViolationsOfMusingoRules,
+    Others
 }
 
 
