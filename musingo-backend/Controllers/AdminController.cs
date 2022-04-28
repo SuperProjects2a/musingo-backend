@@ -11,7 +11,6 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers
 {
-    [Authorize(Roles = "Admin")]
     [Route("api/[controller]")]
     [ApiController]
     public class AdminController : ControllerBase
@@ -24,7 +23,7 @@ namespace musingo_backend.Controllers
             _mediator = mediator;
             _mapper = mapper;
         }
-
+        [Authorize(Roles = "Admin")]
         [HttpPost("AddRole")]
 
         public async Task<ActionResult<UserDto>> AddRole(ChangeRoleDto addRole)
@@ -43,6 +42,7 @@ namespace musingo_backend.Controllers
                 _ => Forbid()
             };
         }
+        [Authorize(Roles = "Admin")]
         [HttpPost("RemoveRole")]
         public async Task<ActionResult<UserDto>> RemoveRole(ChangeRoleDto removeRole)
         {
@@ -59,6 +59,25 @@ namespace musingo_backend.Controllers
                 404 => NotFound(),
                 _ => Forbid()
             };
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpPost("UserBanUnBan/{userId}")]
+        public async Task<ActionResult<UserDetailsDto>> BanUnBanUser(int userId)
+        {
+            var request = new BanUnBanUserCommand()
+            {
+                UserId = userId
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                200 => Ok(_mapper.Map<UserDetailsDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+
         }
 
     }
