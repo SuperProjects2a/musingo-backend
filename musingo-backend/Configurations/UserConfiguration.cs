@@ -62,5 +62,10 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.WalletBalance)
             .HasColumnName("wallet_balance");
 
+        builder.Property(x => x.IsBanned)
+            .HasColumnName("is_banned")
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
+
     }
 }

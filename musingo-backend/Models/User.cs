@@ -36,4 +36,5 @@ public class User
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
     public Role Role { get; set; }
     public double WalletBalance { get; set; }
+    public bool IsBanned { get; set; }
 }
