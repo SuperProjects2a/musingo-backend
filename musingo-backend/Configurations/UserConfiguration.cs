@@ -38,6 +38,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("nvarchar(MAX)")
             .IsRequired(false);
 
+        builder.Property(x => x.Role)
+            .HasColumnName("role")
+            .HasColumnType("int")
+            .HasDefaultValue(Role.User);
+
         builder
             .HasMany(u => u.WatchedOffers)
             .WithMany(o => o.Watchers)
@@ -56,6 +61,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
 
         builder.Property(x => x.WalletBalance)
             .HasColumnName("wallet_balance");
+
+        builder.Property(x => x.IsBanned)
+            .HasColumnName("is_banned")
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
 
     }
 }

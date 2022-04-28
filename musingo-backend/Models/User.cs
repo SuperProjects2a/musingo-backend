@@ -9,12 +9,12 @@ public enum Gender
     Female,
     Undefined
 }
-
+[Flags]
 public enum Role
 {
-    User,
-    Moderator,
-    Admin
+    User = 1,
+    Moderator = 2,
+    Admin = 4
 }
 
 public class User
@@ -36,4 +36,5 @@ public class User
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
     public Role Role { get; set; }
     public double WalletBalance { get; set; }
+    public bool IsBanned { get; set; }
 }

@@ -16,6 +16,7 @@ namespace musingo_backend.Profiles
             CreateMap<OfferUpdateDto, UpdateOfferCommand>().ReverseMap();
             CreateMap<OfferCreateDto, AddOfferCommand>().ReverseMap();
             CreateMap<OfferFilterDto, GetOffersByFilterQuery>().ReverseMap();
+            CreateMap<Offer, ReportedOffersDto>().ReverseMap();
         }
     }
 }

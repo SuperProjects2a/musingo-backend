@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using musingo_backend.Data;
 
@@ -11,9 +12,10 @@ using musingo_backend.Data;
 namespace musingo_backend.Migrations
 {
     [DbContext(typeof(RepositoryContext))]
-    partial class RepositoryContextModelSnapshot : ModelSnapshot
+    [Migration("20220428144525_UserCanBeBanned")]
+    partial class UserCanBeBanned
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -90,12 +92,6 @@ namespace musingo_backend.Migrations
                         .HasColumnType("nvarchar(MAX)")
                         .HasColumnName("image_url");
 
-                    b.Property<bool>("IsBanned")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("bit")
-                        .HasDefaultValue(false)
-                        .HasColumnName("is_banned");
-
                     b.Property<string>("ItemCategory")
                         .IsRequired()
                         .HasColumnType("nvarchar(30)")
@@ -118,38 +114,6 @@ namespace musingo_backend.Migrations
                     b.HasIndex("owner_id");
 
                     b.ToTable("offers", (string)null);
-                });
-
-            modelBuilder.Entity("musingo_backend.Models.Report", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int")
-                        .HasColumnName("id");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
-
-                    b.Property<int>("Reason")
-                        .HasColumnType("int")
-                        .HasColumnName("reason");
-
-                    b.Property<string>("Text")
-                        .HasColumnType("nvarchar(MAX)")
-                        .HasColumnName("text");
-
-                    b.Property<int?>("offer_id")
-                        .HasColumnType("int");
-
-                    b.Property<int?>("reporter_id")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("offer_id");
-
-                    b.HasIndex("reporter_id");
-
-                    b.ToTable("reports", (string)null);
                 });
 
             modelBuilder.Entity("musingo_backend.Models.Transaction", b =>
@@ -343,21 +307,6 @@ namespace musingo_backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Owner");
-                });
-
-            modelBuilder.Entity("musingo_backend.Models.Report", b =>
-                {
-                    b.HasOne("musingo_backend.Models.Offer", "Offer")
-                        .WithMany()
-                        .HasForeignKey("offer_id");
-
-                    b.HasOne("musingo_backend.Models.User", "Reporter")
-                        .WithMany()
-                        .HasForeignKey("reporter_id");
-
-                    b.Navigation("Offer");
-
-                    b.Navigation("Reporter");
                 });
 
             modelBuilder.Entity("musingo_backend.Models.Transaction", b =>
