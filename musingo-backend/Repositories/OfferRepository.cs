@@ -48,7 +48,7 @@ namespace musingo_backend.Repositories
 
         public IQueryable<Offer> GetAllActiveOffers()
         {
-            return  GetAll().Include(x => x.Owner).Where(x => x.OfferStatus == OfferStatus.Active);
+            return  GetAll().Include(x => x.Owner).Where(x => x.OfferStatus == OfferStatus.Active && x.IsBanned == false);
         }
     }
 }

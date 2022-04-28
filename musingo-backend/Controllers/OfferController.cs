@@ -41,13 +41,13 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            switch (result.Status)
+            return result.Status switch
             {
-                case 404:
-                    return NotFound();
-            }
-
-            return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
+                1 => Problem("This offer is banned"),
+                200 => Ok(_mapper.Map<OfferDetailsDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
         }
 
         [Authorize]
@@ -81,15 +81,14 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            switch (result.Status)
+            return result.Status switch
             {
-                case 403:
-                    return Forbid();
-                case 404:
-                    return NotFound();
-            }
-
-            return Ok(result.Body);
+                1 => Problem("This offer is banned"),
+                200 => Ok(_mapper.Map<OfferDetailsDto>(result.Body)),
+                403 => Forbid(),
+                404 => NotFound(),
+                _ => Forbid()
+            };
         }
         [Authorize]
         [HttpPost("Report")]
