@@ -36,4 +36,5 @@ public class Offer
     public DateTime? CreateTime { get; set; }
     public ICollection<User> Watchers { get; set; }
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
+    public bool IsBanned { get; set; }
 }

@@ -61,7 +61,7 @@ namespace musingo_backend.Controllers
             };
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("UserBanUnBan/{userId}")]
+        [HttpPost("UserBanUnban/{userId}")]
         public async Task<ActionResult<UserDetailsDto>> BanUnBanUser(int userId)
         {
             var request = new BanUnBanUserCommand()

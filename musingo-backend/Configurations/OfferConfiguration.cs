@@ -55,5 +55,10 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("create_time")
             .HasColumnType("datetime")
             .HasDefaultValueSql("CAST( GETDATE() AS DateTime )");
+
+        builder.Property(x => x.IsBanned)
+            .HasColumnName("is_banned")
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
     }
 }
