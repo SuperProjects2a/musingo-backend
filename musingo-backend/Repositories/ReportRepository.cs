@@ -11,6 +11,7 @@ public interface IReportRepository
     public Task<Report?> UpdateReport(Report report);
     public Task<Report?> GetReportById(int id);
     public Task<bool> IsReportedByUser(int userId,int offerId);
+    public Task<ICollection<Report>> GetReportsByOffer(int offerId);
 }
 
 public class ReportRepository: Repository<Report>, IReportRepository
@@ -40,5 +41,14 @@ public class ReportRepository: Repository<Report>, IReportRepository
             .Include(x => x.Offer)
             .Include(x => x.Reporter)
             .AnyAsync(x => x.Offer.Id == offerId && x.Reporter.Id == userId);
+    }
+
+    public async Task<ICollection<Report>> GetReportsByOffer(int offerId)
+    {
+        return await GetAll()
+            .Include(x => x.Offer)
+            .Include(x=>x.Reporter)
+            .Where(x => x.Offer.Id == offerId)
+            .ToListAsync();
     }
 }

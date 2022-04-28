@@ -115,6 +115,21 @@ namespace musingo_backend.Controllers
             };
         }
 
+        [Authorize(Roles = "Admin,Moderator")]
+        [HttpGet("ReportedOffers")]
+        public async Task<ActionResult<ICollection<ReportedOffersDto>>> GetReportedOffers()
+        {
+            var request = new GetReportedOffersQuery();
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                200 => Ok(result.Body),
+                _ => Forbid()
+            };
+        }
+        
 
     }
 }

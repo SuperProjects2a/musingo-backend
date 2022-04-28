@@ -13,6 +13,7 @@ namespace musingo_backend.Repositories
         public Task<Offer?> UpdateOffer(Offer offer);
         public Task<ICollection<Offer>> GetUserOffers(int userId);
         public IQueryable<Offer> GetAllActiveOffers();
+        public Task<ICollection<Offer>> GetReportedOffers();
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -49,6 +50,13 @@ namespace musingo_backend.Repositories
         public IQueryable<Offer> GetAllActiveOffers()
         {
             return  GetAll().Include(x => x.Owner).Where(x => x.OfferStatus == OfferStatus.Active && x.IsBanned == false);
+        }
+
+        public async Task<ICollection<Offer>> GetReportedOffers()
+        {
+            var reported = await repositoryContext.Reports.Select(x=>x.Offer.Id).ToListAsync();
+            var offers =await GetAll().Where(x => reported.Contains(x.Id)).ToListAsync();
+            return offers;
         }
     }
 }

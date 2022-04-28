@@ -9,5 +9,6 @@ public class ReportProfile : Profile
     public ReportProfile()
     {
         CreateMap<Report, ReportDto>().ReverseMap();
+        CreateMap<Report, ReportShortDto>().ReverseMap();
     }
 }
