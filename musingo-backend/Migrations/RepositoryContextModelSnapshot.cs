@@ -272,7 +272,7 @@ namespace musingo_backend.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserOfferWatch");
+                    b.ToTable("UserOfferWatch", (string)null);
                 });
 
             modelBuilder.Entity("musingo_backend.Models.Message", b =>

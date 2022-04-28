@@ -6,6 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using musingo_backend.Authentication;
 using musingo_backend.Data;
+using musingo_backend.Models;
 using musingo_backend.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
