@@ -5,16 +5,16 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Admin;
 
-public class BanUnBanUserHandler : IRequestHandler<BanUnBanUserCommand,HandlerResult<User>>
+public class BanUnbanUserHandler : IRequestHandler<BanUnbanUserCommand,HandlerResult<User>>
 {
     private readonly IUserRepository _userRepository;
 
-    public BanUnBanUserHandler(IUserRepository userRepository)
+    public BanUnbanUserHandler(IUserRepository userRepository)
     {
         _userRepository = userRepository;
     }
 
-    public async Task<HandlerResult<User>> Handle(BanUnBanUserCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<User>> Handle(BanUnbanUserCommand request, CancellationToken cancellationToken)
     {
         var user = await _userRepository.GetUserById(request.UserId);
 

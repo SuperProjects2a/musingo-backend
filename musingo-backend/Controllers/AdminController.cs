@@ -62,9 +62,9 @@ namespace musingo_backend.Controllers
         }
         [Authorize(Roles = "Admin")]
         [HttpPost("UserBanUnban/{userId}")]
-        public async Task<ActionResult<UserDetailsDto>> BanUnBanUser(int userId)
+        public async Task<ActionResult<UserDetailsDto>> UserBanUnban(int userId)
         {
-            var request = new BanUnBanUserCommand()
+            var request = new BanUnbanUserCommand()
             {
                 UserId = userId
             };
@@ -74,6 +74,26 @@ namespace musingo_backend.Controllers
             return result.Status switch
             {
                 200 => Ok(_mapper.Map<UserDetailsDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+
+        }
+
+        [Authorize(Roles = "Admin,Moderator")]
+        [HttpPost("OfferBanUnban/{offerId}")]
+        public async Task<ActionResult<OfferDto>> OfferBanUnban(int offerId)
+        {
+            var request = new BanUnbanOfferCommand()
+            {
+                OfferId = offerId
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                200 => Ok(_mapper.Map<OfferDto>(result.Body)),
                 404 => NotFound(),
                 _ => Forbid()
             };
