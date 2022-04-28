@@ -41,7 +41,7 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
         builder.Property(x => x.Role)
             .HasColumnName("role")
             .HasColumnType("int")
-            .HasDefaultValue(1);
+            .HasDefaultValue(Role.User);
 
         builder
             .HasMany(u => u.WatchedOffers)

@@ -205,7 +205,10 @@ namespace musingo_backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("Role")
-                        .HasColumnType("int");
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .HasDefaultValue(1)
+                        .HasColumnName("role");
 
                     b.Property<string>("Street")
                         .HasColumnType("nvarchar(max)");
