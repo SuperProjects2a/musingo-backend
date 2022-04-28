@@ -38,6 +38,11 @@ public class UserConfiguration : IEntityTypeConfiguration<User>
             .HasColumnType("nvarchar(MAX)")
             .IsRequired(false);
 
+        builder.Property(x => x.Role)
+            .HasColumnName("role")
+            .HasColumnType("int")
+            .HasDefaultValue(1);
+
         builder
             .HasMany(u => u.WatchedOffers)
             .WithMany(o => o.Watchers)

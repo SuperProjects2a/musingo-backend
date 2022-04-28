@@ -9,12 +9,12 @@ public enum Gender
     Female,
     Undefined
 }
-
+[Flags]
 public enum Role
 {
-    User,
-    Moderator,
-    Admin
+    User = 1,
+    Moderator = 2,
+    Admin = 4
 }
 
 public class User
