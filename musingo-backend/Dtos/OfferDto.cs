@@ -8,5 +8,6 @@
         public double Cost { get; set; }
         public string OfferStatus { get; set; }
         public string ItemCategory { get; set; }
+        public bool IsBanned { get; set; }
     }
 }

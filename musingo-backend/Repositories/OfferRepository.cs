@@ -12,7 +12,6 @@ namespace musingo_backend.Repositories
         public Task<Offer?> AddOffer(Offer offer);
         public Task<Offer?> UpdateOffer(Offer offer);
         public Task<ICollection<Offer>> GetUserOffers(int userId);
-
         public IQueryable<Offer> GetAllActiveOffers();
     }
 

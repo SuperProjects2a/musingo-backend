@@ -91,6 +91,30 @@ namespace musingo_backend.Controllers
 
             return Ok(result.Body);
         }
+        [Authorize]
+        [HttpPost("Report")]
+        public async Task<ActionResult<ReportDto>> ReportOffer(ReportCreateDto report)
+        {
+            var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
+
+            var request = new ReportOfferCommand()
+            {
+                OfferId = report.OfferId,
+                UserId = userId,
+                Reason = report.Reason,
+                Text = report.Text
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                1 => Problem("You reported this offer"),
+                200 => Ok(_mapper.Map<ReportDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+        }
 
 
     }
