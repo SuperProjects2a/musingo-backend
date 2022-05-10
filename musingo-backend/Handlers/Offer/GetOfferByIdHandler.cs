@@ -16,17 +16,12 @@ public class GetOfferByIdHandler : IRequestHandler<GetOfferByIdQuery, HandlerRes
 
     public async Task<HandlerResult<Offer>> Handle(GetOfferByIdQuery request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<Offer>();
         var offer = await _offerRepository.GetOfferById(request.Id);
 
-        if (offer is null)
-        {
-            result.Status = 404;
-            return result;
-        }
+        if (offer is null) return new HandlerResult<Offer>() { Status = 404 };
 
-        result.Body = offer;
+        if (offer.IsBanned) return new HandlerResult<Offer>() { Status = 1 };
 
-        return result;
+        return new HandlerResult<Offer>() { Body = offer, Status = 200 };
     }
 }

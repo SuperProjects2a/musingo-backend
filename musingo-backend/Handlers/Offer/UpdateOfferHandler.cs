@@ -16,51 +16,34 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, HandlerRes
 
     public async Task<HandlerResult<Offer>> Handle(UpdateOfferCommand request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<Offer>();
 
         var offer = await _offerRepository.GetOfferById(request.Id);
-        if (offer is null)
-        {
-            result.Status = 404;
-            return result;
-        }
+        if (offer is null) return new HandlerResult<Offer>() { Status = 404 };
+       
+        if(offer.IsBanned) return new HandlerResult<Offer>() { Status = 1 };
 
-        if (offer.Owner?.Id != request.UserId)
-        {
-            result.Status = 403;
-            return result;
-        }
+        if (offer.Owner?.Id != request.UserId) return new HandlerResult<Offer>() { Status = 403 };
+
 
         if (offer.OfferStatus == OfferStatus.Sold || offer.OfferStatus == OfferStatus.Cancelled)
-        {
-            result.Status = 403;
-            return result;
-        }
+            return new HandlerResult<Offer>() { Status = 403 };
 
 
         offer.Title = request.Title;
         offer.Cost = request.Cost;
         offer.ImageUrl = request.ImageUrl;
         if (Enum.TryParse<OfferStatus>(request.OfferStatus, out var status)) offer.OfferStatus = status;
-        else 
-        {
-            result.Status = 403;
-            return result;
-        }
+        else return new HandlerResult<Offer>() { Status = 403 };
+        
         if (Enum.TryParse<ItemCategory>(request.ItemCategory, out var category)) offer.ItemCategory = category;
-        else
-        {
-            result.Status = 403;
-            return result;
-        };
+        else return new HandlerResult<Offer>() { Status = 403 };
+
 
         offer.Description = request.Description;
 
         await _offerRepository.UpdateOffer(offer);
 
-        result.Body = offer;
-
-        return result;
+        return new HandlerResult<Offer>() {Body = offer,Status = 200 };
     }
 
 }

@@ -62,6 +62,8 @@ public class UserController : ControllerBase
 
         switch (result.Status)
         {
+            case 1:
+                return Problem("You are banned");
             case 404:
                 return NotFound();
         }
