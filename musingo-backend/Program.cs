@@ -60,6 +60,19 @@ if (builder.Environment.IsDevelopment())
     });
 }
 
+builder.Services.AddCors(o =>
+{
+    o.AddDefaultPolicy(policy =>
+        {
+            policy.WithOrigins("https://localhost:3000",
+                "https://musingo-backend.azurewebsites.net")
+                .AllowAnyHeader()
+                .AllowAnyOrigin()
+                .AllowAnyMethod()
+                .WithExposedHeaders("authtoken");
+        });
+});
+
 if (builder.Environment.IsProduction())
 {
     builder.Services.AddSwaggerGen();
@@ -96,6 +109,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+app.UseCors();
 
 app.UseHttpsRedirection();
 
