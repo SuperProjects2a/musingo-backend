@@ -6,6 +6,7 @@ name: Build and deploy ASP.Net app to Azure Web App - musingo-backend
 on:
   push:
     branches:
+      - main
       - patches
   workflow_dispatch:
 
