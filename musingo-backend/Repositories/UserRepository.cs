@@ -7,6 +7,7 @@ namespace musingo_backend.Repositories;
 public interface IUserRepository
 {
     public Task<User?> GetUserById(int id);
+    public Task<User?> GetUserByEmail(string email);
     public Task<User?> LoginUser(string login, string password);
     public Task<User?> AddUser(User user);
     public Task<User?> UpdateUser(User user);
@@ -22,6 +23,11 @@ public class UserRepository : Repository<User>, IUserRepository
     public async Task<User?> GetUserById(int id)
     {
         var result = await GetAll().Include(x => x.WatchedOffers).FirstOrDefaultAsync(x => x.Id == id);
+        return result;
+    }
+    public async Task<User?> GetUserByEmail(string email)
+    {
+        var result = await GetAll().Include(x => x.WatchedOffers).FirstOrDefaultAsync(x => x.Email == email);
         return result;
     }
 
