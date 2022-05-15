@@ -55,7 +55,7 @@ namespace musingo_backend.Repositories
         public async Task<ICollection<Offer>> GetReportedOffers()
         {
             var reported = await repositoryContext.Reports.Select(x=>x.Offer.Id).ToListAsync();
-            var offers =await GetAll().Where(x => reported.Contains(x.Id)).ToListAsync();
+            var offers =await GetAll().Include(x=>x.Owner).Where(x => reported.Contains(x.Id)).ToListAsync();
             return offers;
         }
     }
