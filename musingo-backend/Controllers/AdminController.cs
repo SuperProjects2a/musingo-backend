@@ -30,7 +30,7 @@ namespace musingo_backend.Controllers
         {
             var request = new AddRoleCommand()
             {
-                UserId = addRole.UserId,
+                Email = addRole.Email,
                 Role = addRole.Role
             };
             var result = await _mediator.Send(request);
@@ -48,7 +48,7 @@ namespace musingo_backend.Controllers
         {
             var request = new RemoveRoleCommand()
             {
-                UserId = removeRole.UserId,
+                Email = removeRole.Email,
                 Role = removeRole.Role
             };
             var result = await _mediator.Send(request);
