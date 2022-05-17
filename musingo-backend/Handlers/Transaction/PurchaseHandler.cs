@@ -36,9 +36,14 @@ public class PurchaseHandler : IRequestHandler<PurchaseCommand, HandlerResult<Tr
             Status = TransactionStatus.Finished,
             Cost = offer.Cost
         };
+        
+        var seller = transaction.Seller;
 
         user.WalletBalance -= offer.Cost;
+        seller.WalletBalance += transaction.Cost;
+
         await _userRepository.UpdateUser(user);
+        await _userRepository.UpdateUser(seller);
 
         offer.OfferStatus = OfferStatus.Sold;
         await _offerRepository.UpdateOffer(offer);
