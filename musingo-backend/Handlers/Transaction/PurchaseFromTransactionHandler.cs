@@ -28,8 +28,13 @@ public class PurchaseFromTransactionHandler : IRequestHandler<PurchaseFromTransa
 
         transaction.Status = TransactionStatus.Finished;
         user.WalletBalance -= transaction.Cost;
+        
+        var seller = transaction.Seller;
+        seller.WalletBalance += transaction.Cost;
 
         await _userRepository.UpdateUser(user);
+        await _userRepository.UpdateUser(seller);
+        
         var result = await _transactionRepository.UpdateTransaction(transaction);
 
         return new HandlerResult<Transaction>() {Body = result, Status = 200};
