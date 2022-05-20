@@ -33,10 +33,10 @@ builder.Services.AddTransient<IReportRepository,ReportRepository >();
 builder.Services.AddResponseCaching();
 builder.Services.AddControllers(o =>
 {
-    o.CacheProfiles.Add("Default60",
+    o.CacheProfiles.Add("Default30",
         new CacheProfile()
         {
-            Duration = 60
+            Duration = 30
         });
 });
 
