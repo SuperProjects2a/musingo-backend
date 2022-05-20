@@ -24,6 +24,7 @@ namespace musingo_backend.Controllers
             _mediator = mediator;
         }
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
@@ -32,6 +33,7 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("{id}")]
+        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
             var request = new GetOfferByIdQuery()

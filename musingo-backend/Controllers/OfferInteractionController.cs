@@ -66,6 +66,7 @@ public class OfferInteractionController : ControllerBase
 
     [Authorize]
     [HttpGet("watch")]
+    [ResponseCache(CacheProfileName = "Default30")]
     public async Task<ActionResult<IEnumerable<OfferDto>>> GetUsersWatchedOffers()
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
