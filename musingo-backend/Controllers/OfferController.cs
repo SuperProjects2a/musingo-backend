@@ -58,6 +58,7 @@ namespace musingo_backend.Controllers
 
             var request = _mapper.Map<AddOfferCommand>(offerCreateDto);
             request.UserId = userId;
+            request.ImageUrls= offerCreateDto.ImageUrls;
 
             var result = await _mediator.Send(request);
 
