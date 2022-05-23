@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using musingo_backend.Models;
+using musingo_backend.Dtos;
 
 namespace musingo_backend.Queries;
 
-public class GetOfferByIdQuery : IRequest<HandlerResult<Offer>>
+public class GetOfferByIdQuery : IRequest<HandlerResult<OfferDetailsDto>>
 {
     public int Id { get; set; }
 }

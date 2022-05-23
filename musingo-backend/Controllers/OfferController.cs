@@ -44,7 +44,7 @@ namespace musingo_backend.Controllers
             return result.Status switch
             {
                 1 => Problem("This offer is banned"),
-                200 => Ok(_mapper.Map<OfferDetailsDto>(result.Body)),
+                200 => Ok(result.Body),
                 404 => NotFound(),
                 _ => Forbid()
             };
