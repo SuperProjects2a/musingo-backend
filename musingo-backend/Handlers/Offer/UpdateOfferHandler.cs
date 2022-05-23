@@ -40,6 +40,12 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, HandlerRes
 
         offer.Description = request.Description;
 
+        offer.Email = request.Email;
+
+        offer.PhoneNumber = request.PhoneNumber;
+
+        offer.City = request.City;
+
         await _offerRepository.UpdateOffer(offer);
 
         return new HandlerResult<Offer>() {Body = offer,Status = 200 };

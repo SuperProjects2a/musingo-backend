@@ -39,7 +39,10 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
             Description = request.Description,
             OfferStatus = OfferStatus.Active,
             ItemCategory = Enum.Parse<ItemCategory>(request.ItemCategory),
-            Owner = await _userRepository.GetUserById(request.UserId)
+            Owner = await _userRepository.GetUserById(request.UserId),
+            Email = request.Email,
+            City = request.City,
+            PhoneNumber = request.PhoneNumber
         };
         if (offer.Owner is null)
         {
