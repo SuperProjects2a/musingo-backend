@@ -31,7 +31,6 @@ public class UpdateOfferHandler : IRequestHandler<UpdateOfferCommand, HandlerRes
 
         offer.Title = request.Title;
         offer.Cost = request.Cost;
-        offer.ImageUrl = request.ImageUrl;
         if (Enum.TryParse<OfferStatus>(request.OfferStatus, out var status)) offer.OfferStatus = status;
         else return new HandlerResult<Offer>() { Status = 403 };
         

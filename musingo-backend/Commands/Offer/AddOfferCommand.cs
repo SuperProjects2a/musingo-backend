@@ -10,4 +10,5 @@ public class AddOfferCommand: IRequest<HandlerResult<Offer>>
     public string Description { get; set; }
     public double Cost { get; set; }
     public string ItemCategory { get; set; }
+    public ICollection<string> ImageUrls { get; set; }
 }

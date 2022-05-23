@@ -13,7 +13,7 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .WithMany()
             .IsRequired()
             .HasForeignKey("owner_id");
-        
+
         builder.HasKey(x => x.Id);
 
         builder.Property(x => x.Id)
@@ -25,12 +25,7 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("title")
             .HasColumnType("nvarchar(MAX)")
             .IsRequired();
-        
-        builder.Property(x => x.ImageUrl)
-            .HasColumnName("image_url")
-            .HasColumnType("nvarchar(MAX)")
-            .IsRequired(false);
-        
+
         builder.Property(x => x.Description)
             .HasColumnName("description")
             .HasColumnType("nvarchar(MAX)")
