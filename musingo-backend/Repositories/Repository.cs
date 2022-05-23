@@ -44,4 +44,11 @@ public class Repository<TEntity> : IRepository<TEntity> where TEntity : class
         await repositoryContext.SaveChangesAsync();
         return entities;
     }
+
+    public async Task<ICollection<TEntity>> AddRangeAsync(ICollection<TEntity> entities)
+    {
+        await repositoryContext.AddRangeAsync(entities);
+        await repositoryContext.SaveChangesAsync();
+        return entities;
+    }
 }
