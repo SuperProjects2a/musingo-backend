@@ -14,5 +14,6 @@ namespace musingo_backend.Dtos
         public double Cost { get; set; }
         [EnumDataType(typeof(ItemCategory))]
         public string ItemCategory { get; set; }
+        public ICollection<string> ImageUrls { get; set; }
     }
 }

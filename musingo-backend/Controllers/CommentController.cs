@@ -26,6 +26,7 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("{id}", Name = "GetCommentById")]
+        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<UserCommentDto>> GetCommentById(int id)
         {
             var request = new GetCommentByIdQuery

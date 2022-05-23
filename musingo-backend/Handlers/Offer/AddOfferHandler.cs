@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using musingo_backend.Commands;
 using musingo_backend.Models;
 using musingo_backend.Repositories;
@@ -9,11 +10,15 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
 {
     private readonly IOfferRepository _offerRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IImageUrlRepository _imageUrlRepository;
+    private readonly IMapper _mapper;
 
-    public AddOfferHandler(IOfferRepository offerRepository, IUserRepository userRepository)
+    public AddOfferHandler(IOfferRepository offerRepository, IUserRepository userRepository, IImageUrlRepository imageUrlRepository, IMapper mapper)
     {
         _offerRepository = offerRepository;
         _userRepository = userRepository;
+        _imageUrlRepository = imageUrlRepository;
+        _mapper = mapper;
     }
 
     public async Task<HandlerResult<Offer>> Handle(AddOfferCommand request, CancellationToken cancellationToken)
@@ -43,6 +48,13 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
         }
 
         await _offerRepository.AddOffer(offer);
+
+        var imageUrls = new List<ImageUrl>();
+        foreach (var requestImageUrl in request.ImageUrls)
+        {
+            imageUrls.Add(new ImageUrl() { Url = requestImageUrl, Offer = offer });
+        }
+        await _imageUrlRepository.AddRangeImageUrl(imageUrls);
 
         result.Body = offer;
         return result;

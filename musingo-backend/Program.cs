@@ -1,6 +1,7 @@
 using System.Text;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -29,8 +30,17 @@ builder.Services.AddTransient<IMessageRepository, MessageRepository>();
 builder.Services.AddTransient<IReportRepository,ReportRepository >();
 builder.Services.AddTransient<IImageUrlRepository,ImageUrlRepository >();
 
-builder.Services.AddControllers();
-// Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+builder.Services.AddResponseCaching();
+builder.Services.AddControllers(o =>
+{
+    o.CacheProfiles.Add("Default30",
+        new CacheProfile()
+        {
+            Duration = 30
+        });
+});
+
 builder.Services.AddEndpointsApiExplorer();
 if (builder.Environment.IsDevelopment())
 {
@@ -113,6 +123,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 app.UseCors();
+
+app.UseResponseCaching();
 
 app.UseHttpsRedirection();
 

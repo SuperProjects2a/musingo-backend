@@ -24,14 +24,16 @@ namespace musingo_backend.Controllers
             _mediator = mediator;
         }
         [HttpGet]
+        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
             var result = await _mediator.Send(request);
-            return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result.Body));
+            return Ok(result.Body);
         }
 
         [HttpGet("{id}")]
+        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
             var request = new GetOfferByIdQuery()
@@ -44,7 +46,7 @@ namespace musingo_backend.Controllers
             return result.Status switch
             {
                 1 => Problem("This offer is banned"),
-                200 => Ok(_mapper.Map<OfferDetailsDto>(result.Body)),
+                200 => Ok(result.Body),
                 404 => NotFound(),
                 _ => Forbid()
             };
@@ -58,6 +60,7 @@ namespace musingo_backend.Controllers
 
             var request = _mapper.Map<AddOfferCommand>(offerCreateDto);
             request.UserId = userId;
+            request.ImageUrls= offerCreateDto.ImageUrls;
 
             var result = await _mediator.Send(request);
 

@@ -25,6 +25,7 @@ public class TransactionController : ControllerBase
 
     [Authorize]
     [HttpGet]
+    [ResponseCache(CacheProfileName = "Default30")]
     public async Task<ActionResult<IEnumerable<TransactionDetailsDto>>> GetTransactions()
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);

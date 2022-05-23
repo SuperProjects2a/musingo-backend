@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using musingo_backend.Models;
+using musingo_backend.Dtos;
 
 namespace musingo_backend.Queries;
 
-public class GetOffersByFilterQuery : IRequest<HandlerResult<ICollection<Offer>>>
+public class GetOffersByFilterQuery : IRequest<HandlerResult<ICollection<OfferDetailsDto>>>
 {
     public string? Search { get; set; }
     public string? Category { get; set; }
