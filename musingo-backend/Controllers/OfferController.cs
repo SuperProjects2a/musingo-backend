@@ -28,7 +28,7 @@ namespace musingo_backend.Controllers
         {
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
             var result = await _mediator.Send(request);
-            return Ok(_mapper.Map<IEnumerable<OfferDetailsDto>>(result.Body));
+            return Ok(result.Body);
         }
 
         [HttpGet("{id}")]

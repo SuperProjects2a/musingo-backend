@@ -1,4 +1,5 @@
-﻿using MediatR;
+﻿using AutoMapper;
+using MediatR;
 using Microsoft.EntityFrameworkCore;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
@@ -7,17 +8,20 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, HandlerResult<ICollection<Offer>>>
+public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, HandlerResult<ICollection<OfferDetailsDto>>>
 {
     private readonly IOfferRepository _offerRepository;
+    private readonly IImageUrlRepository _imageUrlRepository;
+    private IMapper _mapper;
 
-    public GetOffersByFilterHandler(IOfferRepository offerRepository)
+    public GetOffersByFilterHandler(IOfferRepository offerRepository, IImageUrlRepository imageUrlRepository, IMapper mapper)
     {
         _offerRepository = offerRepository;
+        _imageUrlRepository = imageUrlRepository;
+        _mapper = mapper;
     }
-    public async Task<HandlerResult<ICollection<Offer>>> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<ICollection<OfferDetailsDto>>> Handle(GetOffersByFilterQuery request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<ICollection<Offer>>();
 
         var offers = _offerRepository.GetAllActiveOffers();
 
@@ -41,7 +45,15 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, 
             nameof(Sorting.Descending) => offers.OrderBy(x => x.Cost),
             _ => throw new ArgumentException()
         };
-        result.Body = await offers.ToListAsync();
-        return result;
+        var o = await offers.ToListAsync();
+        var offersDetailDto = _mapper.Map<ICollection<OfferDetailsDto>>(o);
+        var t =  _imageUrlRepository.GetImageUrlsByOfferId();
+        foreach (var test in t)
+        {
+            var offer = offersDetailDto.FirstOrDefault(x => x.Id == test.Key);
+            offer.ImageUrls = test.Select(x => x.Url);
+
+        }
+        return new HandlerResult<ICollection<OfferDetailsDto>>(){Body = offersDetailDto,Status = 200};
     }
 }
