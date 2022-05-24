@@ -19,7 +19,7 @@ public class LoginUserHandler : IRequestHandler<LoginUserCommand, HandlerResult<
     {
         var user = await _userRepository.LoginUser(request.Email, request.Password);
 
-        if (user is null) return new HandlerResult<User>() { Status = 404 };
+        if (user is null) return new HandlerResult<User>() { Status = 2 };
 
         if (user.IsBanned) return new HandlerResult<User>() { Status = 1 };
 
