@@ -34,11 +34,17 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, HandlerResul
         if (!(String.IsNullOrEmpty(request.OldPassword) && String.IsNullOrEmpty(request.NewPassword)))
         {
             if (!BCrypt.Net.BCrypt.Verify(request.OldPassword, user.Password))
-                return null;
+            {
+                result.Status = 1;
+                return result;
+            }
 
 
             if (BCrypt.Net.BCrypt.Verify(request.NewPassword, user.Password))
-                return null;
+            {
+                result.Status = 2;
+                return result;
+            }
 
             user.Password = BCrypt.Net.BCrypt.HashPassword(request.NewPassword);
         }

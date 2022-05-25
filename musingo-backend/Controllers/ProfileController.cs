@@ -107,6 +107,10 @@ namespace musingo_backend.Controllers
 
             switch (result.Status)
             {
+                case 1:
+                    return Problem("Wrong current password");
+                case 2:
+                    return Problem("The new password cannot be the same as the old one");
                 case 404:
                     return NotFound();
             }
