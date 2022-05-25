@@ -47,13 +47,14 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, 
         };
         var offerts = await offersQ.ToListAsync();
         var offersDetailDto = _mapper.Map<ICollection<OfferDetailsDto>>(offerts);
-        var imageUrlsGroup =  _imageUrlRepository.GetImageUrlsByOfferId();
+        var imageUrlsGroup = _imageUrlRepository.GetImageUrlsByOfferId();
         foreach (var imageUrls in imageUrlsGroup)
         {
             var offer = offersDetailDto.FirstOrDefault(x => x.Id == imageUrls.Key);
-            offer.ImageUrls = imageUrls.Select(x => x.Url);
+            if (offer is not null)
+                offer.ImageUrls = imageUrls.Select(x => x.Url);
 
         }
-        return new HandlerResult<ICollection<OfferDetailsDto>>(){Body = offersDetailDto,Status = 200};
+        return new HandlerResult<ICollection<OfferDetailsDto>>() { Body = offersDetailDto, Status = 200 };
     }
 }
