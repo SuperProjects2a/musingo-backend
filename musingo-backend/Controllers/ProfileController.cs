@@ -59,7 +59,7 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            return Ok(_mapper.Map<ICollection<OfferDto>>(result.Body));
+            return Ok(result.Body);
             
         }
 

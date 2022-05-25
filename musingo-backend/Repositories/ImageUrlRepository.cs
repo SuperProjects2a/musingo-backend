@@ -11,7 +11,7 @@ public interface IImageUrlRepository
     public Task<ICollection<ImageUrl>> AddRangeImageUrl(ICollection<ImageUrl> imageUrls);
     public Task<ImageUrl?> UpdateImageUrl(ImageUrl offer);
     public IEnumerable<string> GetImageUrlsByOfferId(int offerId);
-    public Task<ImageUrl?> GetFirstImageUrlByOfferId(int offerId);
+    public Task<string?> GetFirstImageUrlByOfferId(int offerId);
     public ICollection<IGrouping<int, ImageUrl>> GetImageUrlsByOfferId();
 }
 
@@ -46,9 +46,10 @@ public class ImageUrlRepository : Repository<ImageUrl>, IImageUrlRepository
         return GetAll().Include(x => x.Offer).Where(x => x.Offer.Id == offerId).Select(x=>x.Url).AsEnumerable();
     }
 
-    public async Task<ImageUrl?> GetFirstImageUrlByOfferId(int offerId)
+    public async Task<string?> GetFirstImageUrlByOfferId(int offerId)
     {
-        return await GetAll().Include(x => x.Offer).FirstOrDefaultAsync(x => x.Offer.Id == offerId);
+        var imageUrl = await GetAll().Include(x => x.Offer).FirstOrDefaultAsync(x => x.Offer.Id == offerId);
+        return imageUrl?.Url;
     }
 
     public ICollection<IGrouping<int, ImageUrl>> GetImageUrlsByOfferId()
