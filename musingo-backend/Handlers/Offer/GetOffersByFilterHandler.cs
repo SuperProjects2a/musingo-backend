@@ -42,7 +42,7 @@ public class GetOffersByFilterHandler : IRequestHandler<GetOffersByFilterQuery, 
             nameof(Sorting.Latest) => offersQ.OrderByDescending(x => x.CreateTime),
             nameof(Sorting.Oldest) => offersQ.OrderBy(x => x.CreateTime),
             nameof(Sorting.Ascending) => offersQ.OrderBy(x => x.Cost),
-            nameof(Sorting.Descending) => offersQ.OrderBy(x => x.Cost),
+            nameof(Sorting.Descending) => offersQ.OrderByDescending(x => x.Cost),
             _ => throw new ArgumentException()
         };
         var offerts = await offersQ.ToListAsync();
