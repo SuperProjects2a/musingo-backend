@@ -111,6 +111,8 @@ namespace musingo_backend.Controllers
                     return Problem("Wrong current password");
                 case 2:
                     return Problem("The new password cannot be the same as the old one");
+                case 3:
+                    return Problem("Someone else is using this email already");
                 case 404:
                     return NotFound();
             }

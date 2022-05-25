@@ -28,6 +28,12 @@ public class UpdateUserHandler : IRequestHandler<UpdateUserCommand, HandlerResul
 
         if (!String.IsNullOrEmpty(request.Email))
         {
+            var checkIfExist = await _userRepository.GetUserByEmail(request.Email);
+            if (checkIfExist is not null)
+            {
+                result.Status = 3;
+                return result;
+            }
             user.Email = request.Email;
         }
 
