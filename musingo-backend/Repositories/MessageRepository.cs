@@ -63,6 +63,8 @@ public class MessageRepository : Repository<Message>, IMessageRepository
             .ThenInclude(x=>x.Buyer)
             .Include(x=>x.Transaction)
             .ThenInclude(x=>x.Seller)
+            .Include(x=>x.Transaction)
+            .ThenInclude(x=>x.Offer)
             .Include(x => x.Sender)
             .Where(x => (x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId) && (x.Transaction.Status == TransactionStatus.Opened ||
                                                   x.Transaction.Status == TransactionStatus.UnderNegotiation))
