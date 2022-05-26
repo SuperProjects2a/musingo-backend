@@ -163,7 +163,7 @@ namespace musingo_backend.Controllers
 
             return result.Status switch
             {
-                200 => Ok(_mapper.Map<ICollection<OfferDetailsDto>>(result.Body)),
+                200 => Ok(result.Body),
                 _ => Forbid()
             };
         }
