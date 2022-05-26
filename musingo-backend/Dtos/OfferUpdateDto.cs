@@ -20,7 +20,7 @@ public class OfferUpdateDto
     [Required(ErrorMessage = "This value is required.")]
     [RegularExpression(@"^[a-zA-Z0-9\.\-_]{1,}@[a-zA-Z0-9\-_]{1,}\.[a-zA-Z\.]{1,}$")]
     public string Email { get; set; }
-    [RegularExpression(@"^([a-zA-Z��󳿟���ӯ��ѣ�\-]+\s)*[-\a-zA-Z��󳿟���ӯ��ѣ�]{3,60}$")]
+    [RegularExpression(@"^([a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ\-]+\s)*[-\a-zA-ZąęółżźćńśĄĘÓŻŹĆŃŁŚ]{3,60}$")]
     public string? City { get; set; }
     [RegularExpression(@"^[0-9]{9,9}$")]
     public string? PhoneNumber { get; set; }
