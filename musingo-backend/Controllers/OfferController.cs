@@ -60,7 +60,7 @@ namespace musingo_backend.Controllers
 
             var request = _mapper.Map<AddOfferCommand>(offerCreateDto);
             request.UserId = userId;
-            request.ImageUrls= offerCreateDto.ImageUrls;
+            request.ImageUrls = offerCreateDto.ImageUrls;
 
             var result = await _mediator.Send(request);
 
@@ -80,7 +80,7 @@ namespace musingo_backend.Controllers
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
             var request = _mapper.Map<UpdateOfferCommand>(offerUpdateDto);
-            request.UserId= userId;
+            request.UserId = userId;
 
             var result = await _mediator.Send(request);
 
@@ -132,7 +132,30 @@ namespace musingo_backend.Controllers
                 _ => Forbid()
             };
         }
-        
+        [Authorize]
+        [HttpPut("Promote/{id}")]
+        public async Task<ActionResult<OfferDto>> PromoteOffer(int offerId)
+        {
+            var request = new PromoteOfferCommand()
+            {
+                UserId = int.Parse(User.Claims.First(x => x.Type == "id").Value),
+                OfferId = offerId
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                1 => Problem("Offer is already promoted"),
+                2 => Problem("not enough money to promote offer"),
+                3 => Problem("You can only promote active offer"),
+                200 => Ok(_mapper.Map<OfferDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+        }
+
+
 
     }
 }

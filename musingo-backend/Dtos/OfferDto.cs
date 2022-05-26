@@ -10,5 +10,6 @@
         public string ItemCategory { get; set; }
         public DateTime? CreateTime { get; set; }
         public bool IsBanned { get; set; }
+        public bool isPromoted { get; set; }
     }
 }

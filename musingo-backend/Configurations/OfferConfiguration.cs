@@ -70,5 +70,10 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("phone_number")
             .HasColumnType("nvarchar(MAX)")
             .IsRequired();
+
+        builder.Property(x => x.isPromoted)
+            .HasColumnName("is_promoted")
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
     }
 }

@@ -44,7 +44,7 @@ namespace musingo_backend.Repositories
 
         public async Task<ICollection<Offer>> GetUserOffers(int userId)
         {
-            return await GetAll().Where(x => x.Owner.Id == userId).ToListAsync();
+            return await GetAll().Where(x => x.Owner.Id == userId && x.OfferStatus != OfferStatus.Cancelled).ToListAsync();
         }
 
         public IQueryable<Offer> GetAllActiveOffers()
