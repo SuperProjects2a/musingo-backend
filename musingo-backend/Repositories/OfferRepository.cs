@@ -14,8 +14,8 @@ namespace musingo_backend.Repositories
         public Task<ICollection<Offer>> GetUserOffers(int userId);
         public IQueryable<Offer> GetAllActiveOffers();
         public Task<ICollection<Offer>> GetReportedOffers();
-
         public Task<ICollection<Offer>> GetPromotedOffers();
+        public Task<ICollection<Offer>> GetUserOtherOffers(string email,int offerId);
     }
 
     public class OfferRepository : Repository<Offer>, IOfferRepository
@@ -64,6 +64,12 @@ namespace musingo_backend.Repositories
         public async Task<ICollection<Offer>> GetPromotedOffers()
         {
             return await GetAll().Where(x => x.isPromoted).ToListAsync();
+        }
+
+        public async Task<ICollection<Offer>> GetUserOtherOffers(string email, int offerId)
+        {
+            return await GetAll().Include(x => x.Owner).Where(x => x.Owner.Email == email && x.Id != offerId)
+                .ToListAsync();
         }
     }
 }

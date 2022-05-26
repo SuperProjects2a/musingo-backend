@@ -168,6 +168,25 @@ namespace musingo_backend.Controllers
             };
         }
 
+        [HttpGet("User")]
+        public async Task<ActionResult<OfferDetailsDto>> GetOfferByUser([FromQuery] UserOffersDto userOfferDto)
+        {
+            var request = new GetUserOtherOffersQuery()
+            {
+                Email = userOfferDto.Email,
+                OfferId = userOfferDto.OfferId
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                200 => Ok(result.Body),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+        }
+
 
 
     }
