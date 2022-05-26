@@ -27,7 +27,6 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<UserDetailsDto>> GetUserInfo()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -48,7 +47,6 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("Offers")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDto>>> GetUserOffers()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -64,7 +62,6 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("Comments")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserComments()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -80,7 +77,6 @@ namespace musingo_backend.Controllers
             
         }
         [HttpGet("Ratings")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserRatings()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
