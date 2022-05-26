@@ -68,7 +68,7 @@ namespace musingo_backend.Repositories
 
         public async Task<ICollection<Offer>> GetUserOtherOffers(string email, int offerId)
         {
-            return await GetAll().Include(x => x.Owner).Where(x => x.Owner.Email == email && x.Id != offerId)
+            return await GetAll().Include(x => x.Owner).Where(x => x.Owner.Email == email && x.Id != offerId && x.OfferStatus == OfferStatus.Active)
                 .ToListAsync();
         }
     }
