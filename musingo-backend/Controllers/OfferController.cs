@@ -154,6 +154,19 @@ namespace musingo_backend.Controllers
                 _ => Forbid()
             };
         }
+        [HttpGet("Promote")]
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetPromoted()
+        {
+            var request = new GetPromotedOffersQuery();
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                200 => Ok(_mapper.Map<ICollection<OfferDetailsDto>>(result.Body)),
+                _ => Forbid()
+            };
+        }
 
 
 
