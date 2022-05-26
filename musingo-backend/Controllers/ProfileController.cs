@@ -47,7 +47,7 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("Offers")]
-        public async Task<ActionResult<ICollection<OfferDto>>> GetUserOffers()
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetUserOffers()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
             var request = new GetUserOffersQuery()

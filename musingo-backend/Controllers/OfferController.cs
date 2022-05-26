@@ -169,7 +169,7 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("User")]
-        public async Task<ActionResult<ICollection<UserOffersDto>>> GetOfferByUser([FromQuery] UserOffersDto userOfferDto)
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByUser([FromQuery] UserOffersDto userOfferDto)
         {
             var request = new GetUserOtherOffersQuery()
             {
