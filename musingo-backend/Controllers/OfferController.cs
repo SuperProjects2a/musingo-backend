@@ -133,7 +133,7 @@ namespace musingo_backend.Controllers
             };
         }
         [Authorize]
-        [HttpPut("Promote/{id}")]
+        [HttpPut("Promote/{offerId}")]
         public async Task<ActionResult<OfferDto>> PromoteOffer(int offerId)
         {
             var request = new PromoteOfferCommand()

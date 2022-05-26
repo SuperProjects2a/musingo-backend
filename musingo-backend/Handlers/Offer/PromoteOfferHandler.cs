@@ -25,6 +25,9 @@ public class PromoteOfferHandler:IRequestHandler<PromoteOfferCommand, HandlerRes
         if (offer is null)
             return new HandlerResult<Offer>() { Status = 404 };
 
+        if (offer.Owner?.Id != user.Id)
+            return new HandlerResult<Offer>() { Status = 403 };
+
         if (offer.isPromoted)
             return new HandlerResult<Offer>() { Status = 1 };
 
@@ -35,6 +38,8 @@ public class PromoteOfferHandler:IRequestHandler<PromoteOfferCommand, HandlerRes
             return new HandlerResult<Offer>() { Status = 3 };
 
         offer.isPromoted = true;
+        user.WalletBalance -= 10;
+        await _userRepository.UpdateUser(user);
         await _offerRepository.UpdateOffer(offer);
 
         return new HandlerResult<Offer>() { Body = offer, Status = 200 };
