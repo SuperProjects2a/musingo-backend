@@ -70,7 +70,7 @@ namespace musingo_backend.Controllers
                     return NotFound();
             }
 
-            return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
+            return Ok(result.Body);
         }
 
         [Authorize]

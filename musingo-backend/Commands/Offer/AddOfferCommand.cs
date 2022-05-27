@@ -1,9 +1,9 @@
 ﻿using MediatR;
-using musingo_backend.Models;
+using musingo_backend.Dtos;
 
 namespace musingo_backend.Commands;
 
-public class AddOfferCommand: IRequest<HandlerResult<Offer>>
+public class AddOfferCommand: IRequest<HandlerResult<OfferDetailsDto>>
 {
     public int UserId { get; set; }
     public string Title { get; set; }
