@@ -38,9 +38,10 @@ public class TransactionConfiguration : IEntityTypeConfiguration<Transaction>
         builder.Property(x => x.LastUpdateTime)
             .HasColumnName("last_update_time")
             .HasColumnType("datetime")
+            .HasDefaultValueSql("CAST( GETDATE() AS DateTime )")
             .ValueGeneratedOnAddOrUpdate();
 
-        builder.Property(x => x.Cost)
+            builder.Property(x => x.Cost)
             .HasColumnName("cost");
 
     }
