@@ -63,12 +63,12 @@ namespace musingo_backend.Repositories
 
         public async Task<ICollection<Offer>> GetPromotedOffers()
         {
-            return await GetAll().Where(x => x.isPromoted).ToListAsync();
+            return await GetAll().Where(x => x.isPromoted && x.OfferStatus == OfferStatus.Active && x.IsBanned == false).ToListAsync();
         }
 
         public async Task<ICollection<Offer>> GetUserOtherOffers(string email, int offerId)
         {
-            return await GetAll().Include(x => x.Owner).Where(x => x.Owner.Email == email && x.Id != offerId && x.OfferStatus == OfferStatus.Active)
+            return await GetAll().Include(x => x.Owner).Where(x => x.Owner.Email == email && x.Id != offerId && x.OfferStatus == OfferStatus.Active && x.IsBanned == false)
                 .ToListAsync();
         }
     }
