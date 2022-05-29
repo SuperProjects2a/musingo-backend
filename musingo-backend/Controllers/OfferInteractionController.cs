@@ -76,7 +76,19 @@ public class OfferInteractionController : ControllerBase
         };
 
         var result = await _mediator.Send(request);
-        return Ok(_mapper.Map<IEnumerable<OfferDto>>(result.Body));
+        var dtoRes = _mapper.Map<IEnumerable<OfferDto>>(result.Body);
+        if (result is not null && result.Body is not null)
+        {
+            var arr = dtoRes.ToArray();
+            for (int i = 0; i < result.Body.Count; i++)
+            {
+                arr[i].isWatched = true;
+            }
+
+            dtoRes = arr;
+        }
+        
+        return Ok(dtoRes);
     }
     
     [Authorize]
