@@ -55,12 +55,24 @@ namespace musingo_backend.Controllers
         [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
             var request = new GetOfferByIdQuery()
             {
                 Id = id
             };
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
 
             var result = await _mediator.Send(request);
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null && result.Body is not null)
+            {
+                if (watchedOffers.Body.Any(x => x.Id == result.Body.Id))
+                    result.Body.isWatched = true;
+            }
 
             return result.Status switch
             {
