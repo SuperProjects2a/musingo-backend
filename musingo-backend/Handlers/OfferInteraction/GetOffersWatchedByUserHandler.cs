@@ -7,7 +7,7 @@ using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class GetOffersWatchedByUserHandler : IRequestHandler<GetOffersWatchedByUserQuery, HandlerResult<ICollection<OfferDto>>>
+public class GetOffersWatchedByUserHandler : IRequestHandler<GetOffersWatchedByUserQuery, HandlerResult<ICollection<OfferDetailsDto>>>
 {
     private IUserRepository _userRepository;
     private IImageUrlRepository _imageUrlRepository;
@@ -20,19 +20,23 @@ public class GetOffersWatchedByUserHandler : IRequestHandler<GetOffersWatchedByU
         _mapper = mapper;
     }
 
-    public async Task<HandlerResult<ICollection<OfferDto>>> Handle(GetOffersWatchedByUserQuery request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<ICollection<OfferDetailsDto>>> Handle(GetOffersWatchedByUserQuery request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<ICollection<OfferDto>>();
+        var result = new HandlerResult<ICollection<OfferDetailsDto>>();
         var user = await _userRepository.GetUserById(request.UserId);
         if (user is null) return null;
-        var watchedOffers = user.WatchedOffers;
+        var watchedOffers = user.WatchedOffers.Where(x=>x.OfferStatus == OfferStatus.Active);
 
-        var offersDto = _mapper.Map<ICollection<OfferDto>>(watchedOffers);
-        foreach (var offerDto in offersDto)
+        var offersDetailsDto = _mapper.Map<ICollection<OfferDetailsDto>>(watchedOffers);
+        var imageUrlsGroup = _imageUrlRepository.GetImageUrlsByOfferId();
+        foreach (var imageUrls in imageUrlsGroup)
         {
-            offerDto.ImageUrl = await _imageUrlRepository.GetFirstImageUrlByOfferId(offerDto.Id);
+            var offer = offersDetailsDto.FirstOrDefault(x => x.Id == imageUrls.Key);
+            if (offer is not null)
+                offer.ImageUrls = imageUrls.Select(x => x.Url);
+
         }
-        result.Body = offersDto;
+        result.Body = offersDetailsDto;
         return result;
     }
 }

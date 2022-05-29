@@ -66,7 +66,7 @@ public class OfferInteractionController : ControllerBase
 
     [Authorize]
     [HttpGet("watch")]
-    public async Task<ActionResult<IEnumerable<OfferDto>>> GetUsersWatchedOffers()
+    public async Task<ActionResult<IEnumerable<OfferDetailsDto>>> GetUsersWatchedOffers()
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
         var request = new GetOffersWatchedByUserQuery()
