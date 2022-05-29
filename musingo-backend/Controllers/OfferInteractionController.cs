@@ -76,7 +76,7 @@ public class OfferInteractionController : ControllerBase
         };
 
         var result = await _mediator.Send(request);
-        var dtoRes = _mapper.Map<IEnumerable<OfferDto>>(result.Body);
+        var dtoRes = result.Body;
         if (result is not null && result.Body is not null)
         {
             var arr = dtoRes.ToArray();
