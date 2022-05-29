@@ -27,8 +27,27 @@ namespace musingo_backend.Controllers
         [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
             var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
+            
             return Ok(result.Body);
         }
 
@@ -157,9 +176,28 @@ namespace musingo_backend.Controllers
         [HttpGet("Promote")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetPromoted()
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
+            
             var request = new GetPromotedOffersQuery();
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
 
             var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
 
             return result.Status switch
             {
@@ -171,6 +209,14 @@ namespace musingo_backend.Controllers
         [HttpGet("User")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByUser([FromQuery] UserOffersDto userOfferDto)
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
+            
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
+            
             var request = new GetUserOtherOffersQuery()
             {
                 Email = userOfferDto.Email,
@@ -178,6 +224,18 @@ namespace musingo_backend.Controllers
             };
 
             var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
 
             return result.Status switch
             {
