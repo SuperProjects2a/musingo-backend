@@ -66,8 +66,7 @@ public class MessageRepository : Repository<Message>, IMessageRepository
             .Include(x=>x.Transaction)
             .ThenInclude(x=>x.Offer)
             .Include(x => x.Sender)
-            .Where(x => (x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId) && (x.Transaction.Status == TransactionStatus.Opened ||
-                                                  x.Transaction.Status == TransactionStatus.UnderNegotiation))
+            .Where(x => (x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId))
             .ToListAsync();
 
         var latestMessages = messages.GroupBy(x => x.Transaction.Id, (key, g) => g.OrderByDescending(e => e.SendTime).FirstOrDefault()).ToList();

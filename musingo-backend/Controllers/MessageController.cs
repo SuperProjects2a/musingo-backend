@@ -60,7 +60,6 @@ namespace musingo_backend.Controllers
 
             return result.Status switch
             {
-                1 => Problem("Transaction ended"),
                 200 => Ok(_mapper.Map<MessageDto>(result.Body)),
                 403 => Forbid(),
                 404 => NotFound(),
