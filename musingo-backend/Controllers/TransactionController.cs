@@ -7,6 +7,7 @@ using musingo_backend.Commands;
 using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Queries;
+using musingo_backend.Repositories;
 
 namespace musingo_backend.Controllers;
 
@@ -16,11 +17,14 @@ public class TransactionController : ControllerBase
 {
     private IMapper _mapper;
     private IMediator _mediator;
+    private IImageUrlRepository _imageUrlRepository;
 
-    public TransactionController(IMapper mapper, IMediator mediator)
+
+    public TransactionController(IMapper mapper, IMediator mediator, IImageUrlRepository imageUrlRepository)
     {
         _mapper = mapper;
         _mediator = mediator;
+        _imageUrlRepository = imageUrlRepository;
     }
 
     [Authorize]
@@ -100,10 +104,13 @@ public class TransactionController : ControllerBase
                 return Forbid();
         }
 
+        var dto = _mapper.Map<TransactionDetailsDto>(result.Body);
+        dto.Offer.ImageUrls = _imageUrlRepository.GetImageUrlsByOfferId(dto.Offer.Id);
+
         return result.Status switch
         {
             404 => NotFound(),
-            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
+            200 => Ok(dto),
             _ => Forbid()
         };
     }
