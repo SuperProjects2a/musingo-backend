@@ -9,4 +9,5 @@ public class TransactionDetailsDto
     public DateTime LastUpdateTime { get; set; }
     public string Status { get; set; }
     public double Cost { get; set; }
+    public int Rating { get; set; }
 }
