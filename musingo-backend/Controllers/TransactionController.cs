@@ -87,11 +87,18 @@ public class TransactionController : ControllerBase
 
     }
 
+    [Authorize]
     [HttpGet("{transactionId}")]
     public async Task<ActionResult<TransactionDetailsDto>> GetTransactionById(int transactionId)
     {
+        var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
         var request = new GetTransactionQuery() { Id = transactionId };
         var result = await _mediator.Send(request);
+        if (result.Body is not null)
+        {
+            if (result.Body.Buyer.Id != userId && result.Body.Seller.Id != userId) 
+                return Forbid();
+        }
 
         return result.Status switch
         {
