@@ -86,4 +86,18 @@ public class TransactionController : ControllerBase
         };
 
     }
+
+    [HttpGet("{transactionId}")]
+    public async Task<ActionResult<TransactionDetailsDto>> GetTransactionById(int transactionId)
+    {
+        var request = new GetTransactionQuery() { Id = transactionId };
+        var result = await _mediator.Send(request);
+
+        return result.Status switch
+        {
+            404 => NotFound(),
+            200 => Ok(_mapper.Map<TransactionDetailsDto>(result.Body)),
+            _ => Forbid()
+        };
+    }
 }
