@@ -40,7 +40,7 @@ namespace musingo_backend.Controllers
 
             return result.Status switch
             {
-                200 => Ok(_mapper.Map<ICollection<MessageDto>>(result.Body)),
+                200 => Ok(result.Body),
                 403 => Forbid(),
                 404 => NotFound(),
                 _ => Forbid()
