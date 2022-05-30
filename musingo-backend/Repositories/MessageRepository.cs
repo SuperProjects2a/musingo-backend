@@ -8,7 +8,7 @@ namespace musingo_backend.Repositories;
 public interface IMessageRepository
 {
     public Task<ICollection<Message>> GetMessagesByTransaction(int transactionId);
-    public Task<Message> SendMessage(Message message);
+    public Task<Message?> SendMessage(Message message);
     public Task<ICollection<Message>> UpdateMessageRange(ICollection<Message> messages);
     public Task<int> UnreadMessageCount(int transactionId, int userId);
 
@@ -37,7 +37,7 @@ public class MessageRepository : Repository<Message>, IMessageRepository
         return messages;
     }
 
-    public async Task<Message> SendMessage(Message message)
+    public async Task<Message?> SendMessage(Message message)
     {
         return await AddAsync(message);
     }
