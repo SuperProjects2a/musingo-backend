@@ -21,6 +21,7 @@ namespace musingo_backend.Repositories
             var result = await repositoryContext.Transactions
                 .Include(x => x.Seller)
                 .Include(x => x.Buyer)
+                .Include(x => x.Offer)
                 .FirstOrDefaultAsync(x => x.Id == id);
             return result;
         }
