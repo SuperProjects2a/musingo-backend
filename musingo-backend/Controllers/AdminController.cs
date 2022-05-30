@@ -30,7 +30,7 @@ namespace musingo_backend.Controllers
         {
             var request = new AddRoleCommand()
             {
-                UserId = addRole.UserId,
+                Email = addRole.Email,
                 Role = addRole.Role
             };
             var result = await _mediator.Send(request);
@@ -48,7 +48,7 @@ namespace musingo_backend.Controllers
         {
             var request = new RemoveRoleCommand()
             {
-                UserId = removeRole.UserId,
+                Email = removeRole.Email,
                 Role = removeRole.Role
             };
             var result = await _mediator.Send(request);
@@ -61,13 +61,13 @@ namespace musingo_backend.Controllers
             };
         }
         [Authorize(Roles = "Admin")]
-        [HttpPost("UserBanUnban/{userId}")]
-        public async Task<ActionResult<UserDetailsDto>> UserBanUnban(int userId)
+        [HttpPost("UserBanUnban/{email}")]
+        public async Task<ActionResult<UserDetailsDto>> UserBanUnban(string email)
         {
             var adminId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
             var request = new BanUnbanUserCommand()
             {
-                UserId = userId,
+                Email = email,
                 AdminId = adminId
             };
 

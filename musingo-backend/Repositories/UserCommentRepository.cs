@@ -47,6 +47,8 @@ public class UserCommentRepository:Repository<UserComment>, IUserCommentReposito
         var result = await GetAll()
             .Include(x=>x.Transaction)
             .Include(x => x.User)
+            .Include(x => x.Transaction)
+            .ThenInclude(x => x.Offer)
             .Where(x => x.User.Id == userId).ToListAsync();
         return result;
     }
@@ -56,6 +58,8 @@ public class UserCommentRepository:Repository<UserComment>, IUserCommentReposito
         var result = await repositoryContext.UserComments
             .Include(x=>x.User)
             .Include(x=>x.Transaction)
+            .Include(x=>x.Transaction)
+            .ThenInclude(x=>x.Offer)
             .Where(x => x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId)
             .Where(x => x.User.Id != userId)
             .ToListAsync();

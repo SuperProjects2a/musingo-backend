@@ -11,12 +11,14 @@ public class GetAllChatsHandler: IRequestHandler<GetAllChatsQuery,HandlerResult<
 {
     private readonly IMessageRepository _messageRepository;
     private readonly IUserRepository _userRepository;
+    private readonly IImageUrlRepository _imageUrlRepository;
     private readonly IMapper _mapper;
 
-    public GetAllChatsHandler(IMessageRepository messageRepository, IUserRepository userRepository, IMapper mapper)
+    public GetAllChatsHandler(IMessageRepository messageRepository, IUserRepository userRepository, IImageUrlRepository imageUrlRepository, IMapper mapper)
     {
         _messageRepository = messageRepository;
         _userRepository = userRepository;
+        _imageUrlRepository = imageUrlRepository;
         _mapper = mapper;
     }
 
@@ -33,8 +35,13 @@ public class GetAllChatsHandler: IRequestHandler<GetAllChatsQuery,HandlerResult<
         foreach (var message in messagesDto)
         {
             message.UnReadMessagesCount =
-                await _messageRepository.UnreadMessageCount(message.TransactionId, request.UserId);
+                await _messageRepository.UnreadMessageCount(message.Transaction.Id, request.UserId);
+            if (message.Transaction.Offer is not null)
+                message.Transaction.Offer.ImageUrl =
+                    await _imageUrlRepository.GetFirstImageUrlByOfferId(message.Transaction.Offer.Id);
         }
+
+        messagesDto = messagesDto.OrderByDescending(x => x.UnReadMessagesCount).ToList();
 
         return new HandlerResult<ICollection<MessageChatDto>> { Body = messagesDto, Status = 200 };
     }

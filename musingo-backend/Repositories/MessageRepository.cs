@@ -8,7 +8,7 @@ namespace musingo_backend.Repositories;
 public interface IMessageRepository
 {
     public Task<ICollection<Message>> GetMessagesByTransaction(int transactionId);
-    public Task<Message> SendMessage(Message message);
+    public Task<Message?> SendMessage(Message message);
     public Task<ICollection<Message>> UpdateMessageRange(ICollection<Message> messages);
     public Task<int> UnreadMessageCount(int transactionId, int userId);
 
@@ -37,7 +37,7 @@ public class MessageRepository : Repository<Message>, IMessageRepository
         return messages;
     }
 
-    public async Task<Message> SendMessage(Message message)
+    public async Task<Message?> SendMessage(Message message)
     {
         return await AddAsync(message);
     }
@@ -63,9 +63,10 @@ public class MessageRepository : Repository<Message>, IMessageRepository
             .ThenInclude(x=>x.Buyer)
             .Include(x=>x.Transaction)
             .ThenInclude(x=>x.Seller)
+            .Include(x=>x.Transaction)
+            .ThenInclude(x=>x.Offer)
             .Include(x => x.Sender)
-            .Where(x => (x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId) && (x.Transaction.Status == TransactionStatus.Opened ||
-                                                  x.Transaction.Status == TransactionStatus.UnderNegotiation))
+            .Where(x => (x.Transaction.Buyer.Id == userId || x.Transaction.Seller.Id == userId))
             .ToListAsync();
 
         var latestMessages = messages.GroupBy(x => x.Transaction.Id, (key, g) => g.OrderByDescending(e => e.SendTime).FirstOrDefault()).ToList();

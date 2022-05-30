@@ -36,4 +36,8 @@ public class Offer
     public ICollection<User> Watchers { get; set; }
     public ICollection<UserOfferWatch> UserOfferWatches { get; set; }
     public bool IsBanned { get; set; }
+    public string Email { get; set; }
+    public string? City { get; set; }
+    public string? PhoneNumber { get; set; }
+    public bool isPromoted { get; set; }
 }

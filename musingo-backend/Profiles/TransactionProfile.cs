@@ -9,5 +9,6 @@ public class TransactionProfile : Profile
     public TransactionProfile()
     {
         CreateMap<Transaction, TransactionDetailsDto>();
+        CreateMap<Transaction, TransactionDto>().ReverseMap();
     }
 }

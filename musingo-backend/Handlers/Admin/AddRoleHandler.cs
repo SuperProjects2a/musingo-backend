@@ -15,7 +15,7 @@ public class AddRoleHandler : IRequestHandler<AddRoleCommand,HandlerResult<User>
     }
     public async Task<HandlerResult<User>> Handle(AddRoleCommand request, CancellationToken cancellationToken)
     {
-        var user = await _userRepository.GetUserById(request.UserId);
+        var user = await _userRepository.GetUserByEmail(request.Email);
 
         if (user is null) return new HandlerResult<User> { Status = 404 };
 

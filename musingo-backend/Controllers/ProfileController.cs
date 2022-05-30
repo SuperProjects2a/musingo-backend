@@ -27,7 +27,6 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<UserDetailsDto>> GetUserInfo()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -48,8 +47,7 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("Offers")]
-        [ResponseCache(CacheProfileName = "Default30")]
-        public async Task<ActionResult<ICollection<OfferDto>>> GetUserOffers()
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetUserOffers()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
             var request = new GetUserOffersQuery()
@@ -59,12 +57,11 @@ namespace musingo_backend.Controllers
 
             var result = await _mediator.Send(request);
 
-            return Ok(_mapper.Map<ICollection<OfferDto>>(result.Body));
+            return Ok(result.Body);
             
         }
 
         [HttpGet("Comments")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserComments()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -80,7 +77,6 @@ namespace musingo_backend.Controllers
             
         }
         [HttpGet("Ratings")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<UserCommentDto>>> GetUserRatings()
         {
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
@@ -107,6 +103,12 @@ namespace musingo_backend.Controllers
 
             switch (result.Status)
             {
+                case 1:
+                    return Problem("Wrong current password");
+                case 2:
+                    return Problem("The new password cannot be the same as the old one");
+                case 3:
+                    return Problem("Someone else is using this email already");
                 case 404:
                     return NotFound();
             }

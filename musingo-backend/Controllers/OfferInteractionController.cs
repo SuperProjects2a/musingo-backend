@@ -66,8 +66,7 @@ public class OfferInteractionController : ControllerBase
 
     [Authorize]
     [HttpGet("watch")]
-    [ResponseCache(CacheProfileName = "Default30")]
-    public async Task<ActionResult<IEnumerable<OfferDto>>> GetUsersWatchedOffers()
+    public async Task<ActionResult<IEnumerable<OfferDetailsDto>>> GetUsersWatchedOffers()
     {
         var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
         var request = new GetOffersWatchedByUserQuery()
@@ -76,7 +75,19 @@ public class OfferInteractionController : ControllerBase
         };
 
         var result = await _mediator.Send(request);
-        return Ok(_mapper.Map<IEnumerable<OfferDto>>(result.Body));
+        var dtoRes = result.Body;
+        if (result is not null && result.Body is not null)
+        {
+            var arr = dtoRes.ToArray();
+            for (int i = 0; i < result.Body.Count; i++)
+            {
+                arr[i].isWatched = true;
+            }
+
+            dtoRes = arr;
+        }
+        
+        return Ok(dtoRes);
     }
     
     [Authorize]

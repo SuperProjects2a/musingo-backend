@@ -28,9 +28,6 @@ public class SendMessageHandler: IRequestHandler<SendMessageCommand,HandlerResul
         if (transaction.Buyer.Id != request.UserId && transaction.Seller.Id != request.UserId)
             return new HandlerResult<Message> { Status = 403 };
 
-        if (transaction.Status != TransactionStatus.Opened && transaction.Status != TransactionStatus.UnderNegotiation)
-            return new HandlerResult<Message> { Status = 1 };
-
         var user = await _userRepository.GetUserById(request.UserId);
         if (user is null) return new HandlerResult<Message> { Status = 404 };
 

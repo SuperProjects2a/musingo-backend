@@ -1,4 +1,5 @@
 using System.Text;
+using System.Text.Json.Serialization;
 using MediatR;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Mvc;
@@ -27,8 +28,8 @@ builder.Services.AddTransient<IUserCommentRepository, UserCommentRepository>();
 builder.Services.AddTransient<ITransactionRepository, TransactionRepository>();
 builder.Services.AddTransient<IOfferRepository, OfferRepository>();
 builder.Services.AddTransient<IMessageRepository, MessageRepository>();
-builder.Services.AddTransient<IReportRepository,ReportRepository >();
-builder.Services.AddTransient<IImageUrlRepository,ImageUrlRepository >();
+builder.Services.AddTransient<IReportRepository, ReportRepository>();
+builder.Services.AddTransient<IImageUrlRepository, ImageUrlRepository>();
 
 
 builder.Services.AddResponseCaching();
@@ -40,7 +41,7 @@ builder.Services.AddControllers(o =>
             Duration = 30
         });
 });
-
+builder.Services.AddControllers().AddJsonOptions(x => x.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddEndpointsApiExplorer();
 if (builder.Environment.IsDevelopment())
 {

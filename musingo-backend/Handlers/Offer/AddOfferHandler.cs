@@ -1,12 +1,13 @@
 ﻿using AutoMapper;
 using MediatR;
 using musingo_backend.Commands;
+using musingo_backend.Dtos;
 using musingo_backend.Models;
 using musingo_backend.Repositories;
 
 namespace musingo_backend.Handlers;
 
-public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Offer>>
+public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<OfferDetailsDto>>
 {
     private readonly IOfferRepository _offerRepository;
     private readonly IUserRepository _userRepository;
@@ -21,9 +22,9 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
         _mapper = mapper;
     }
 
-    public async Task<HandlerResult<Offer>> Handle(AddOfferCommand request, CancellationToken cancellationToken)
+    public async Task<HandlerResult<OfferDetailsDto>> Handle(AddOfferCommand request, CancellationToken cancellationToken)
     {
-        var result = new HandlerResult<Offer>();
+        var result = new HandlerResult<OfferDetailsDto>();
 
         var user = await _userRepository.GetUserById(request.UserId);
         if (user is null)
@@ -39,7 +40,10 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
             Description = request.Description,
             OfferStatus = OfferStatus.Active,
             ItemCategory = Enum.Parse<ItemCategory>(request.ItemCategory),
-            Owner = await _userRepository.GetUserById(request.UserId)
+            Owner = await _userRepository.GetUserById(request.UserId),
+            Email = request.Email,
+            City = request.City,
+            PhoneNumber = request.PhoneNumber
         };
         if (offer.Owner is null)
         {
@@ -55,8 +59,9 @@ public class AddOfferHandler: IRequestHandler<AddOfferCommand, HandlerResult<Off
             imageUrls.Add(new ImageUrl() { Url = requestImageUrl, Offer = offer });
         }
         await _imageUrlRepository.AddRangeImageUrl(imageUrls);
-
-        result.Body = offer;
+        var offerDetailsDto = _mapper.Map<OfferDetailsDto>(offer);
+        offerDetailsDto.ImageUrls = request.ImageUrls;
+        result.Body = offerDetailsDto;
         return result;
     }
 }

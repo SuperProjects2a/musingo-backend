@@ -11,12 +11,14 @@ public class GetOfferByIdHandler : IRequestHandler<GetOfferByIdQuery, HandlerRes
 {
     private readonly IOfferRepository _offerRepository;
     private readonly IImageUrlRepository _imageUrlRepository;
+    private readonly IUserRepository _userRepository;
     private readonly IMapper _mapper;
 
-    public GetOfferByIdHandler(IOfferRepository offerRepository, IImageUrlRepository imageUrlRepository, IMapper mapper)
+    public GetOfferByIdHandler(IOfferRepository offerRepository, IImageUrlRepository imageUrlRepository, IUserRepository userRepository, IMapper mapper)
     {
         _offerRepository = offerRepository;
         _imageUrlRepository = imageUrlRepository;
+        _userRepository = userRepository;
         _mapper = mapper;
     }
 
@@ -30,6 +32,7 @@ public class GetOfferByIdHandler : IRequestHandler<GetOfferByIdQuery, HandlerRes
 
         var offerDetailsDto = _mapper.Map<OfferDetailsDto>(offer);
         offerDetailsDto.ImageUrls = _imageUrlRepository.GetImageUrlsByOfferId(offerDetailsDto.Id);
+        if (offer.Owner != null) offerDetailsDto.Owner.AvgRating = await _userRepository.GetAvg(offer.Owner.Id);
 
 
         return new HandlerResult<OfferDetailsDto>() { Body = offerDetailsDto, Status = 200 };

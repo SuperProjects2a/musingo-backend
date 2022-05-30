@@ -21,5 +21,7 @@ namespace musingo_backend.Dtos
         public string? PhoneNumber { get; set; }
         public DateTime? Birth { get; set; }
         public bool IsBanned { get; set; }
+
+        public string? Role { get; set; }
     }
 }

@@ -95,6 +95,11 @@ namespace musingo_backend.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"), 1L, 1);
 
+                    b.Property<string>("City")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("city");
+
                     b.Property<double>("Cost")
                         .HasColumnType("double precision")
                         .HasColumnName("cost");
@@ -109,6 +114,11 @@ namespace musingo_backend.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(MAX)")
                         .HasColumnName("description");
+
+                    b.Property<string>("Email")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("email");
 
                     b.Property<bool>("IsBanned")
                         .ValueGeneratedOnAdd()
@@ -125,10 +135,21 @@ namespace musingo_backend.Migrations
                         .HasColumnType("int")
                         .HasColumnName("offer_status");
 
+                    b.Property<string>("PhoneNumber")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(MAX)")
+                        .HasColumnName("phone_number");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasColumnType("nvarchar(MAX)")
                         .HasColumnName("title");
+
+                    b.Property<bool>("isPromoted")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("bit")
+                        .HasDefaultValue(false)
+                        .HasColumnName("is_promoted");
 
                     b.Property<int>("owner_id")
                         .HasColumnType("int");
@@ -185,11 +206,11 @@ namespace musingo_backend.Migrations
                         .HasColumnType("float")
                         .HasColumnName("cost");
 
-                    b.Property<byte[]>("LastUpdateTime")
-                        .IsRequired()
+                    b.Property<DateTime?>("LastUpdateTime")
                         .ValueGeneratedOnAddOrUpdate()
-                        .HasColumnType("timestamp")
-                        .HasColumnName("last_update_time");
+                        .HasColumnType("datetime")
+                        .HasColumnName("last_update_time")
+                        .HasDefaultValueSql("CAST( GETDATE() AS DateTime )");
 
                     b.Property<int>("Status")
                         .HasColumnType("int")

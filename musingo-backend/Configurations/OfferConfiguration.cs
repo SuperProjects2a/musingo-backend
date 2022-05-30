@@ -55,5 +55,25 @@ public class OfferConfiguration : IEntityTypeConfiguration<Offer>
             .HasColumnName("is_banned")
             .HasColumnType("bit")
             .HasDefaultValue(false);
+
+        builder.Property(x => x.Email)
+            .HasColumnName("email")
+            .HasColumnType("nvarchar(MAX)")
+            .IsRequired();
+
+        builder.Property(x => x.City)
+            .HasColumnName("city")
+            .HasColumnType("nvarchar(MAX)")
+            .IsRequired();
+
+        builder.Property(x => x.PhoneNumber)
+            .HasColumnName("phone_number")
+            .HasColumnType("nvarchar(MAX)")
+            .IsRequired();
+
+        builder.Property(x => x.isPromoted)
+            .HasColumnName("is_promoted")
+            .HasColumnType("bit")
+            .HasDefaultValue(false);
     }
 }

@@ -27,8 +27,27 @@ namespace musingo_backend.Controllers
         [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
             var request = _mapper.Map<GetOffersByFilterQuery>(filterDto);
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
             var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
+            
             return Ok(result.Body);
         }
 
@@ -36,12 +55,24 @@ namespace musingo_backend.Controllers
         [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
             var request = new GetOfferByIdQuery()
             {
                 Id = id
             };
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
 
             var result = await _mediator.Send(request);
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null && result.Body is not null)
+            {
+                if (watchedOffers.Body.Any(x => x.Id == result.Body.Id))
+                    result.Body.isWatched = true;
+            }
 
             return result.Status switch
             {
@@ -60,7 +91,7 @@ namespace musingo_backend.Controllers
 
             var request = _mapper.Map<AddOfferCommand>(offerCreateDto);
             request.UserId = userId;
-            request.ImageUrls= offerCreateDto.ImageUrls;
+            request.ImageUrls = offerCreateDto.ImageUrls;
 
             var result = await _mediator.Send(request);
 
@@ -70,7 +101,7 @@ namespace musingo_backend.Controllers
                     return NotFound();
             }
 
-            return Ok(_mapper.Map<OfferDetailsDto>(result.Body));
+            return Ok(result.Body);
         }
 
         [Authorize]
@@ -80,7 +111,7 @@ namespace musingo_backend.Controllers
             var userId = int.Parse(User.Claims.First(x => x.Type == "id").Value);
 
             var request = _mapper.Map<UpdateOfferCommand>(offerUpdateDto);
-            request.UserId= userId;
+            request.UserId = userId;
 
             var result = await _mediator.Send(request);
 
@@ -132,7 +163,101 @@ namespace musingo_backend.Controllers
                 _ => Forbid()
             };
         }
-        
+        [Authorize]
+        [HttpPut("Promote/{offerId}")]
+        public async Task<ActionResult<OfferDto>> PromoteOffer(int offerId)
+        {
+            var request = new PromoteOfferCommand()
+            {
+                UserId = int.Parse(User.Claims.First(x => x.Type == "id").Value),
+                OfferId = offerId
+            };
+
+            var result = await _mediator.Send(request);
+
+            return result.Status switch
+            {
+                1 => Problem("Offer is already promoted"),
+                2 => Problem("not enough money to promote offer"),
+                3 => Problem("You can only promote active offer"),
+                200 => Ok(_mapper.Map<OfferDto>(result.Body)),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+        }
+        [HttpGet("Promote")]
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetPromoted()
+        {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
+            
+            var request = new GetPromotedOffersQuery();
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
+
+            var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
+
+            return result.Status switch
+            {
+                200 => Ok(result.Body),
+                _ => Forbid()
+            };
+        }
+
+        [HttpGet("User")]
+        public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetOfferByUser([FromQuery] UserOffersDto userOfferDto)
+        {
+            var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
+            var userId = userIdString is null ? -1 : int.Parse(userIdString.Value);
+            
+            var watchedRequest = new GetOffersWatchedByUserQuery()
+            {
+                UserId = userId
+            };
+            
+            var request = new GetUserOtherOffersQuery()
+            {
+                Email = userOfferDto.Email,
+                OfferId = userOfferDto.OfferId
+            };
+
+            var result = await _mediator.Send(request);
+            
+            var watchedOffers = await _mediator.Send(watchedRequest);
+            if (watchedOffers is not null)
+            {
+                var arr = result.Body.ToArray();
+                for (int i = 0; i < result.Body.Count; i++)
+                {
+                    arr[i].isWatched = watchedOffers.Body.Any(x => x.Id == arr[i].Id);
+                }
+
+                result.Body = arr;
+            }
+
+            return result.Status switch
+            {
+                200 => Ok(result.Body),
+                404 => NotFound(),
+                _ => Forbid()
+            };
+        }
+
+
 
     }
 }

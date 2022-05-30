@@ -13,7 +13,7 @@ public class Transaction
     public Offer? Offer { get; set; }
     public User? Seller { get; set; }
     public User? Buyer { get; set; }
-    public DateTime LastUpdateTime { get; set; }
+    public DateTime? LastUpdateTime { get; set; }
     public TransactionStatus Status { get; set; }
     public double Cost { get; set; }
 }

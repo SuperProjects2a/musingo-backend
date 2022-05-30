@@ -64,8 +64,8 @@ public class UserController : ControllerBase
         {
             case 1:
                 return Problem("You are banned");
-            case 404:
-                return NotFound();
+            case 2:
+                return Problem("Check email or password");
         }
 
         var token = _jwtAuth.Authentication(result.Body);
