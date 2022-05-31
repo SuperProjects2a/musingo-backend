@@ -24,7 +24,6 @@ namespace musingo_backend.Controllers
             _mediator = mediator;
         }
         [HttpGet]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<ICollection<OfferDetailsDto>>> GetAll([FromQuery] OfferFilterDto filterDto)
         {
             var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
@@ -52,7 +51,6 @@ namespace musingo_backend.Controllers
         }
 
         [HttpGet("{id}")]
-        [ResponseCache(CacheProfileName = "Default30")]
         public async Task<ActionResult<OfferDetailsDto>> GetById(int id)
         {
             var userIdString = User.Claims.FirstOrDefault(x => x.Type == "id");
